@@ -98,9 +98,18 @@ function UniversalModules.AntiAFK(Enabled)
             end
         end
     else
-        AFKConnectionBegan and AFKConnectionBegan:Disconnect()
-        AFKConnectionChanged and AFKConnectionChanged:Disconnect()
-        AFKConnectionEnded and AFKConnectionEnded:Disconnect()
+        if AFKConnectionBegan then
+            AFKConnectionBegan:Disconnect()
+            AFKConnectionBegan = nil
+        end
+        if AFKConnectionChanged then
+            AFKConnectionChanged:Disconnect()
+            AFKConnectionChanged = nil
+        end
+        if AFKConnectionEnded then
+            AFKConnectionEnded:Disconnect()
+            AFKConnectionEnded = nil
+        end
         AFKTimer = 0
     end
 end
@@ -186,10 +195,10 @@ function UniversalModules.WalkSpeed(Enabled)
         if Humanoid then
             Humanoid.WalkSpeed = ModedWalkSpeed
         end
-        LockConnections.WS = or Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+        LockConnections.WS = Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
             Humanoid.WalkSpeed = ModedWalkSpeed
         end)
-        LockConnections.WSCA = or Speaker.CharacterAdded:Connect(function(Character)
+        LockConnections.WSCA = Speaker.CharacterAdded:Connect(function(Character)
             local Humanoid = Character:WaitForChild("Humanoid")
             if Humanoid then
                 Humanoid.WalkSpeed = ModedWalkSpeed
@@ -199,8 +208,14 @@ function UniversalModules.WalkSpeed(Enabled)
             end)
         end)
     else
-        LockConnections.WS and LockConnections.WS:Disconnect()
-        LockConnections.WS and LockConnections.WSCA:Disconnect()
+        if LockConnections.WS then
+            LockConnections.WS:Disconnect()
+            LockConnections.WS = nil
+        end
+        if LockConnections.WSCA then
+            LockConnections.WSCA:Disconnect()
+            LockConnections.WSCA = nil
+        end
         local Character = Speaker.Character
         if Character then
             local Humanoid = Character:FindFirstChild("Humanoid")
@@ -230,11 +245,11 @@ function UniversalModules.JumpPower(Enabled)
             Humanoid.UseJumpPower = true
             Humanoid.JumpPower = ModedJumpPower
         end
-        LockConnections.JP = or Humanoid:GetPropertyChangedSignal("JumpPower"):Connect(function()
+        LockConnections.JP = Humanoid:GetPropertyChangedSignal("JumpPower"):Connect(function()
             Humanoid.UseJumpPower = true
             Humanoid.JumpPower = ModedJumpPower
         end)
-        LockConnections.JPCA = or Speaker.CharacterAdded:Connect(function(Character)
+        LockConnections.JPCA = Speaker.CharacterAdded:Connect(function(Character)
             local Humanoid = Character:WaitForChild("Humanoid")
             if not Humanoid.UseJumpPower then
                 Humanoid.UseJumpPower = true
@@ -250,8 +265,14 @@ function UniversalModules.JumpPower(Enabled)
             end)
         end)
     else
-        LockConnections.JP and LockConnections.JP:Disconnect()
-        LockConnections.JPCA and LockConnections.JPCA:Disconnect()
+        if LockConnections.JP then
+            LockConnections.JP:Disconnect()
+            LockConnections.JP = nil
+        end
+        if LockConnections.JPCA then
+            LockConnections.JPCA:Disconnect()
+            LockConnections.JPCA = nil
+        end
         local Character = Speaker.Character
         if Character then
             local Humanoid = Character:FindFirstChild("Humanoid")
@@ -275,11 +296,14 @@ function UniversalModules.Gravity(Enabled)
     if Enabled then
         CurrentGravity = Workspace.Gravity
         Workspace.Gravity = ModedGravity
-        LockConnections.G = or Workspace:GetPropertyChangedSignal("Gravity"):Connect(function()
+        LockConnections.G = Workspace:GetPropertyChangedSignal("Gravity"):Connect(function()
             Workspace.Gravity = ModedGravity
         end)
     else
-        LockConnections.G and LockConnections.G:Disconnect()
+        if LockConnections.G then
+            LockConnections.G:Disconnect()
+            LockConnections.G = nil
+        end
         Workspace.Gravity = CurrentGravity
     end
 end
@@ -305,7 +329,10 @@ function UniversalModules.Noclip(Enabled)
             end
         end)
     else
-        LockConnections.NC and LockConnections.NC:Disconnect()
+        if LockConnections.NC then
+            LockConnections.NC:Disconnect()
+            LockConnections.NC = nil
+        end
         for _, Part in pairs(NoclipParts) do
             Part.CanCollide = true
         end
@@ -333,13 +360,15 @@ function UniversalModules.VehicleNoclip(Enabled)
                         end
                     end
                 elseif VehicleModel.ClassName ~= "Model" then
-                        VehicleModel = VehicleModel.Parent
-                    end
+                    VehicleModel = VehicleModel.Parent
                 end
             end
         end)
     else
-        LockConnections.VNC and LockConnections.VNC:Disconnect()
+        if LockConnections.VNC then
+            LockConnections.VNC:Disconnect()
+            LockConnections.VNC = nil
+        end
         for _, Part in pairs(VNoclipParts) do
             Part.CanCollide = true
         end
@@ -394,9 +423,9 @@ function UniversalModules.Fly(Enabled)
         LockConnections.Fly = Stepped:Connect(function()
             local MoveDirection = Vector3.new(0, 0, 0)
             if not VFly and not SitFly then
-                Character and Character:FindFirstChild("Humanoid").PlatformStand = true
+                Character:FindFirstChild("Humanoid").PlatformStand = true
             elseif SitFly then
-                Character and Character:FindFirstChild("Humanoid").Sit = true
+                Character:FindFirstChild("Humanoid").Sit = true
             end
             if Control.W == 1 then
                 MoveDirection = MoveDirection + Camera.CFrame.LookVector
@@ -478,21 +507,36 @@ function UniversalModules.Fly(Enabled)
             end
         end)
     else
-        LockConnections.Fly and LockConnections.Fly:Disconnect()
-        FlyKeyDown and FlyKeyDown:Disconnect()
-        FlyKeyUp and FlyKeyUp:Disconnect()
-        NonQEFlyKeyDown and NonQEFlyKeyDown:Disconnect()
-        NonQEFlyKeyUp and NonQEFlyKeyUp:Disconnect()
+        if LockConnections.Fly then
+            LockConnections.Fly:Disconnect()
+            LockConnections.Fly = nil
+        end
+        if FlyKeyDown or FlyKeyUp then
+            FlyKeyDown:Disconnect()
+            FlyKeyUp:Disconnect()
+            FlyKeyDown = nil
+            FlyKeyUp = nil
+        end
+        if NonQEFlyKeyDown or NonQEFlyKeyUp then
+            NonQEFlyKeyDown:Disconnect()
+            NonQEFlyKeyUp:Disconnect()
+            NonQEFlyKeyDown = nil
+            NonQEFlyKeyUp = nil
+        end
         local Character = Speaker.Character
         if Character then
             local RootPart = Character:FindFirstChild("HumanoidRootPart")
             local Humanoid = Character:FindFirstChild("Humanoid")
-            Humanoid and Humanoid.PlatformStand = false
-            Humanoid and Humanoid.Sit = false
+            Humanoid.PlatformStand = false
+            Humanoid.Sit = false
             local BodyVelocity = RootPart:FindFirstChild("BodyVelocity")
             local BodyGyro = RootPart:FindFirstChild("BodyGyro")
-            BodyVelocity and BodyVelocity:Destroy()
-            BodyGyro and BodyGyro:Destroy()
+            if BodyVelocity then
+                BodyVelocity:Destroy()
+            end
+            if BodyGyro then
+                BodyGyro:Destroy()
+            end
         end
     end
 end
