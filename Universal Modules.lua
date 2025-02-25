@@ -58,6 +58,7 @@ VerticalFlySpeedMultipiler = 1
 --|| AntiAFK Function ||--
 
 function UniversalModules.AntiAFK(Enabled)
+    AntiAFKEnabled = Enabled
     if Enabled then
         AFKTimer = 0
         AFKConnectionBegan = UserInputService.InputBegan:Connect(function()
@@ -69,10 +70,12 @@ function UniversalModules.AntiAFK(Enabled)
         AFKConnectionEnded = UserInputService.InputEnded:Connect(function()
             AFKTimer = 0
         end)
-        while Enabled do
+        while AntiAFKEnabled do
             wait(0.5)
             AFKTimer = AFKTimer + 0.5
+            print(AFKTimer)
             if AFKTimer >= AFKTime then
+                print("Anti AFKed Once")
                 if AFKMousemoverel then
                     mousemoverel(-1, -1)
                     Heartbeat:Wait()
