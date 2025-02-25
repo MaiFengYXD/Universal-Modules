@@ -59,6 +59,7 @@ VerticalFlySpeedMultipiler = 1
 
 function UniversalModules.AntiAFK(Enabled)
     AntiAFKEnabled = Enabled
+    print(AntiAFKEnabled)
     if Enabled then
         AFKTimer = 0
         AFKConnectionBegan = UserInputService.InputBegan:Connect(function()
