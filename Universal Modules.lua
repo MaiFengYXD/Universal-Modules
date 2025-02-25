@@ -40,6 +40,7 @@ AFKMouseClick1 = false
 AFKMouseClick2 = false
 AFKMousemoveabs = false
 AFKMousemoverel = true
+AFKTime = 60
 Mouse = Speaker:GetMouse()
 CurrentFPS = getfpscap() or 240
 TargetFPS = CurrentFPS
