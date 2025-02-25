@@ -36,6 +36,10 @@ RenderStepped = RunService.RenderStepped
 Stepped = RunService.Stepped
 Speaker = Players.LocalPlayer
 Camera = Workspace.CurrentCamera
+AFKMouseClick1 = false
+AFKMouseClick2 = false
+AFKMousemoveabs = false
+AFKMousemoverel = true
 Mouse = Speaker:GetMouse()
 CurrentFPS = getfpscap() or 240
 TargetFPS = CurrentFPS
@@ -102,6 +106,30 @@ end
 
 function UniversalModules.AntiAFKValue(Number)
     AFKTime = Number
+end
+
+function UniversalModules.AntiAFKOption(Option)
+    if Option == "1" then
+        AFKMousemoverel = true
+        AFKMousemoveabs = false
+        AFKMouseClick1 = false
+        AFKMouseClick2 = false
+    elseif Option == "2" then
+        AFKMousemoverel = false
+        AFKMousemoveabs = true
+        AFKMouseClick1 = false
+        AFKMouseClick2 = false
+    elseif Option == "3" then
+        AFKMousemoverel = false
+        AFKMousemoveabs = false
+        AFKMouseClick1 = true
+        AFKMouseClick2 = false
+    elseif Option == "4" then
+        AFKMousemoverel = false
+        AFKMousemoveabs = false
+        AFKMouseClick1 = false
+        AFKMouseClick2 = true
+    end
 end
 
 --|| FPS Cap Function ||--
