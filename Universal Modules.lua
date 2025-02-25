@@ -119,7 +119,7 @@ function UniversalModules.AntiAFK(Enabled)
     end
 end
 
-function UniversalModules.AntiAFKNotify(Enabled)
+function UniversalModules.UseAntiAFKNotify(Enabled)
     AntiAFKNotifyEnabled = Enabled
 end
 
