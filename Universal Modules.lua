@@ -41,10 +41,10 @@ AFKMouseClick2 = false
 AFKMousemoveabs = false
 AFKMousemoverel = true
 AFKTime = 60
+AFKTimes = 0
 Mouse = Speaker:GetMouse()
 CurrentFPS = getfpscap() or 240
 TargetFPS = CurrentFPS
-AntiKickEnabled = false
 Rivals = (game.PlaceId == 17625359962 and true) or false
 Weaponry = (game.PlaceId == 3297964905 and true) or false
 VFly = false
@@ -74,6 +74,10 @@ function UniversalModules.AntiAFK(Enabled)
             wait(0.5)
             AFKTimer = AFKTimer + 0.5
             if AFKTimer >= AFKTime then
+                AFKTimes = AFKTimes + 1
+                if AntiAFKNotifyEnabled then
+                    Library:Notify((GlobalText.AntiAFKNotify .. AFKTimes .. GlobalText.AntiAFKNotify2), 5)
+                end
                 if AFKMousemoverel then
                     mousemoverel(-1, -1)
                     Heartbeat:Wait()
@@ -115,27 +119,31 @@ function UniversalModules.AntiAFK(Enabled)
     end
 end
 
+function UniversalModules.AntiAFKNotify(Enabled)
+    AntiAFKNotifyEnabled = Enabled
+end
+
 function UniversalModules.AntiAFKValue(Number)
     AFKTime = Number
 end
 
-function UniversalModules.AntiAFKOption(Option)
-    if Option == "1" then
+function UniversalModules.AntiAFKMethod(Method)
+    if Method == "1" then
         AFKMousemoverel = true
         AFKMousemoveabs = false
         AFKMouseClick1 = false
         AFKMouseClick2 = false
-    elseif Option == "2" then
+    elseif Method == "2" then
         AFKMousemoverel = false
         AFKMousemoveabs = true
         AFKMouseClick1 = false
         AFKMouseClick2 = false
-    elseif Option == "3" then
+    elseif Method == "3" then
         AFKMousemoverel = false
         AFKMousemoveabs = false
         AFKMouseClick1 = true
         AFKMouseClick2 = false
-    elseif Option == "4" then
+    elseif Method == "4" then
         AFKMousemoverel = false
         AFKMousemoveabs = false
         AFKMouseClick1 = false
@@ -169,13 +177,13 @@ function UniversalModules.AntiKick()
         local Index
         local NameCall
         Index = hookmetamethod(game, "__index", function(Self, Method)
-            if Self == Speaker and Method:lower() == "kick" and AntiKickEnabled then
+            if Self == Speaker and Method:lower() == "kick" then
                 return error("Expected ':' not '.' calling member function Kick", 2)
             end
             return Index(Self, Method)
         end)
         NameCall = hookmetamethod(game, "__namecall", function(Self, ...)
-            if Self == Speaker and getnamecallmethod():lower() == "kick" and AntiKickEnabled then
+            if Self == Speaker and getnamecallmethod():lower() == "kick" then
                 return
             end
             return NameCall(Self, ...)
