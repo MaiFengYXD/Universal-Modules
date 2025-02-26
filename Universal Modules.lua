@@ -609,29 +609,43 @@ function UniversalModules.Fly(Enabled)
     end
 end
 
-if UserInputService:IsKeyDown(Enum.KeyCode.W) and FlyControl then
-    FlyControl.W = 1
+function IsKeyDownPCall(Key)
+    pcall(function()
+        Key = 1
+    end)
 end
-if UserInputService:IsKeyDown(Enum.KeyCode.S) and FlyControl then
-    FlyControl.S = 1
+
+if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+    IsKeyDownPCall(FlyControl.W)
 end
-if UserInputService:IsKeyDown(Enum.KeyCode.A) and FlyControl then
-    FlyControl.A = 1
+if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+    IsKeyDownPCall(FlyControl.S)
 end
-if UserInputService:IsKeyDown(Enum.KeyCode.D) and FlyControl then
-    FlyControl.D = 1
+if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+    IsKeyDownPCall(FlyControl.A)
 end
-if QEFly and UserInputService:IsKeyDown(Enum.KeyCode.Q) and FlyControl then
-    FlyControl.Q = 1
+if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+    IsKeyDownPCall(FlyControl.D)
 end
-if QEFly and UserInputService:IsKeyDown(Enum.KeyCode.E) and FlyControl then
-    FlyControl.E = 1
+if UserInputService:IsKeyDown(Enum.KeyCode.Q) then
+    if QEFly then
+        IsKeyDownPCall(FlyControl.Q)
+    end
 end
-if not QEFly and UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) and FlyControl then
-    FlyControl.LeftShift = 1
+if UserInputService:IsKeyDown(Enum.KeyCode.E) then
+    if QEFly then
+        IsKeyDownPCall(FlyControl.E)
+    end
 end
-if not QEFly and UserInputService:IsKeyDown(Enum.KeyCode.Space) and FlyControl then
-    FlyControl.Space = 1
+if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+    if not QEFly then
+        IsKeyDownPCall(FlyControl.LeftShift)
+    end
+end
+if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+    if not QEFly then
+        IsKeyDownPCall(FlyControl.Space)
+    end
 end
 
 --|| Speaker Died Connection ||--
