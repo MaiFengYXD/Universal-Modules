@@ -378,8 +378,8 @@ function UniversalModules.Noclip(Enabled)
 end
 
 function UniversalModules.VehicleNoclip(Enabled)
-    VNoclipNotified2 = false
     if Enabled then
+        VNoclipNotified2 = false
         VNoclipParts = {}
         LockConnections.VNC = (LockConnections.VNC and LockConnections.VNC:Disconnect()) or Stepped:Connect(function(Delta)
             local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
@@ -407,6 +407,7 @@ function UniversalModules.VehicleNoclip(Enabled)
                 end
             else
                 VNoclipNotified = false
+                VNoclipNotified2 = false
                 VNocliping = false
                 if not VNoclipNotified2 then
                     VNoclipNotified2 = true
