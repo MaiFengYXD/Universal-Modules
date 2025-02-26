@@ -48,7 +48,7 @@ UniversalModules.CurrentFPS = getfpscap() or 240
 TargetFPS = UniversalModules.CurrentFPS
 CurrentWalkSpeed = Speaker.Character:FindFirstChild("Humanoid").WalkSpeed or 16
 CurrentJumpPower = Speaker.Character:FindFirstChild("Humanoid").JumpPower or 50
-CurrentGravity = Workspace.Gravity or 196.2
+CurrentGravity = Workspace.Gravity
 ModedWalkSpeed = CurrentWalkSpeed
 ModedJumpPower = CurrentJumpPower
 ModedGravity = CurrentGravity
@@ -646,6 +646,10 @@ end)
 
 function UniversalModules:Exit()
     pcall(function()
+        CurrentWalkSpeed = Speaker.Character:FindFirstChild("Humanoid").WalkSpeed or 16
+        CurrentJumpPower = Speaker.Character:FindFirstChild("Humanoid").JumpPower or 50
+        CurrentGravity = Workspace.Gravity
+        CurrentVoid = Workspace.FallenPartsDestroyHeight
         UniversalModules.AntiAFK(false)
         UniversalModules.FPSCap(false)
         UniversalModules.WalkSpeed(false)
