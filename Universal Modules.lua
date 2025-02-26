@@ -424,6 +424,10 @@ function UniversalModules.AntiVoid(Enabled)
             Workspace.FallenPartsDestroyHeight = (0 / 0)
         end)
     else
+        if LockConnections.V then
+            LockConnections.V:Disconnect()
+            LockConnections.V = nil
+        end
         Workspace.FallenPartsDestroyHeight = CurrentVoid
     end
 end
