@@ -448,10 +448,10 @@ function UniversalModules.Fly(Enabled)
         local FlyKeyUp = nil
         local FlyVelocity = Instance.new("BodyVelocity")
         FlyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-        FlyVelocity.Velocity = 0
+        FlyVelocity.Velocity = Vector3.new(0, 0, 0)
         FlyVelocity.Parent = RootPart
         if UseFlyGyro then
-            local FlyGyro = Instance.new("BodyGyro")
+            FlyGyro = Instance.new("BodyGyro")
             FlyGyro.P = 9e4
             FlyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
             FlyGyro.CFrame = Camera.CFrame
