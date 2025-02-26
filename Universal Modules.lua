@@ -518,11 +518,6 @@ Mouse.KeyDown:Connect(function(Key)
     elseif QEFly and Key == "e" then
         FlyControl.E = 1
     end
-    if UseFlyGyro and UniversalModules.Flying then
-        pcall(function()
-            Camera.CameraType = Enum.CameraType.Track
-        end)
-    end
 end)
 Mouse.KeyUp:Connect(function(Key)
     local Key = Key:lower()
@@ -590,7 +585,10 @@ function UniversalModules.Fly(Enabled)
             end
             FlyVelocity.Velocity = MoveDirection * FlySpeed
             if UseFlyGyro then
-                FlyGyro.CFrame = Camera.CFrame
+                pcall(function()
+                    FlyGyro.CFrame = Camera.CFrame
+                    Camera.CameraType = Enum.CameraType.Track
+                end)
             end
         end)
         NonQEFlyKeyDown = not QEFly and UserInputService.InputBegan:Connect(function(Key)
@@ -598,11 +596,6 @@ function UniversalModules.Fly(Enabled)
                 FlyControl.LeltShift = 1
             elseif Key.KeyCode == Enum.KeyCode.Space then
                 FlyControl.Space = 1
-            end
-            if UseFlyGyro then
-                pcall(function()
-                    Camera.CameraType = Enum.CameraType.Track
-                end)
             end
         end)
         NonQEFlyKeyUp = not QEFly and UserInputService.InputEnded:Connect(function(Key)
