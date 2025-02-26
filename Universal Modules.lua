@@ -633,7 +633,10 @@ end
 
 LockConnections.SpeakerDied = Speaker.CharacterAdded:Connect(function(Character)
     if UniversalModules.Flying then
-        FlyToggle:SetValue(false)
+        UniversalModules.Fly(false)
+        if Character:WaitForChild("HumanoidRootPart") then
+            UniversalModules.Fly(true)
+        end
     end
 end)
 
