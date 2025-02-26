@@ -552,7 +552,7 @@ function UniversalModules.Fly(Enabled)
         local RootPart = Character:WaitForChild("HumanoidRootPart")
         local FlyKeyDown = nil
         local FlyKeyUp = nil
-        local FlyVelocity = Instance.new("BodyVelocity")
+        FlyVelocity = Instance.new("BodyVelocity")
         FlyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
         FlyVelocity.Velocity = Vector3.new(0, 0, 0)
         FlyVelocity.Parent = RootPart
@@ -626,22 +626,14 @@ function UniversalModules.Fly(Enabled)
         end
         local Character = Speaker.Character
         if Character then
+            BodyGyro = BodyGyro and BodyGyro:Destroy()
+            BodyVelocity = BodyVelocity and BodyVelocity:Destroy()
             local RootPart = Character:FindFirstChild("HumanoidRootPart")
             local Humanoid = Character:FindFirstChild("Humanoid")
             if Humanoid then
                 Humanoid.PlatformStand = false
                 if not Humanoid.SeatPart then
                     Humanoid.Sit = false
-                end
-            end
-            if RootPart then
-                local BodyVelocity = RootPart:FindFirstChild("BodyVelocity")
-                local BodyGyro = RootPart:FindFirstChild("BodyGyro")
-                if BodyVelocity then
-                    BodyVelocity:Destroy()
-                end
-                if BodyGyro then
-                    BodyGyro:Destroy()
                 end
             end
         end
