@@ -457,7 +457,7 @@ function UniversalModules.Fly(Enabled)
         local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
         UniversalModules.Flying = true
         local RootPart = Character:WaitForChild("HumanoidRootPart")
-        local Control = (QEFly and {W = 0, S = 0, A = 0, D = 0, Q = 0, E = 0}) or {W = 0, S = 0, A = 0, D = 0, LeftShift = 0, Space = 0}
+        FlyControl = (QEFly and {W = 0, S = 0, A = 0, D = 0, Q = 0, E = 0}) or {W = 0, S = 0, A = 0, D = 0, LeftShift = 0, Space = 0}
         local FlyKeyDown = nil
         local FlyKeyUp = nil
         local FlyVelocity = Instance.new("BodyVelocity")
@@ -473,26 +473,26 @@ function UniversalModules.Fly(Enabled)
         end
         local UIP = UserInputService
         if UIP:IsKeyDown(Enum.KeyCode.W) then
-            Control.W = 1
+            FlyControl.W = 1
         end
         if UIP:IsKeyDown(Enum.KeyCode.S) then
-            Control.S = 1
+            FlyControl.S = 1
         end
         if UIP:IsKeyDown(Enum.KeyCode.A) then
-            Control.A = 1
+            FlyControl.A = 1
         end
         if UIP:IsKeyDown(Enum.KeyCode.D) then
-            Control.D = 1
+            FlyControl.D = 1
         end
         if QEFly and UIP:IsKeyDown(Enum.KeyCode.Q) then
-            Control.Q = 1
+            FlyControl.Q = 1
         elseif UIP:IsKeyDown(Enum.KeyCode.LeftShift) then
-            Control.LeftShift = 1
+            FlyControl.LeftShift = 1
         end
         if QEFly and UIP:IsKeyDown(Enum.KeyCode.E) then
-            Control.E = 1
+            FlyControl.E = 1
         elseif UIP:IsKeyDown(Enum.KeyCode.Space) then
-            Control.Space = 1
+            FlyControl.Space = 1
         end
         LockConnections.Fly = Stepped:Connect(function()
             local MoveDirection = Vector3.new(0, 0, 0)
@@ -501,22 +501,22 @@ function UniversalModules.Fly(Enabled)
             elseif SitFly then
                 Character:FindFirstChild("Humanoid").Sit = true
             end
-            if Control.W == 1 then
+            if FlyControl.W == 1 then
                 MoveDirection = MoveDirection + Camera.CFrame.LookVector
             end
-            if Control.S == 1 then
+            if FlyControl.S == 1 then
                 MoveDirection = MoveDirection - Camera.CFrame.LookVector
             end
-            if Control.A == 1 then
+            if FlyControl.A == 1 then
                 MoveDirection = MoveDirection - Camera.CFrame.RightVector
             end
-            if Control.D == 1 then
+            if FlyControl.D == 1 then
                 MoveDirection = MoveDirection + Camera.CFrame.RightVector
             end
-            if Control.Q == 1 or Control.LeftShift == 1 then
+            if FlyControl.Q == 1 or FlyControl.LeftShift == 1 then
                 MoveDirection = MoveDirection - Vector3.new(0, VerticalFlySpeedMultipiler, 0)
             end
-            if Control.E == 1 or Control.Space == 1 then
+            if FlyControl.E == 1 or FlyControl.Space == 1 then
                 MoveDirection = MoveDirection + Vector3.new(0, VerticalFlySpeedMultipiler, 0)
             end
             FlyVelocity.Velocity = MoveDirection * FlySpeed
@@ -527,17 +527,17 @@ function UniversalModules.Fly(Enabled)
         FlyKeyDown = Mouse.KeyDown:Connect(function(Key)
             local Key = Key:lower()
             if Key == "w" then
-                Control.W = 1
+                FlyControl.W = 1
             elseif Key == "s" then
-                Control.S = 1
+                FlyControl.S = 1
             elseif Key == "a" then
-                Control.A = 1
+                FlyControl.A = 1
             elseif Key == "d" then
-                Control.D = 1
+                FlyControl.D = 1
             elseif QEFly and Key == "q" then
-                Control.Q = 1
+                FlyControl.Q = 1
             elseif QEFly and Key == "e" then
-                Control.E = 1
+                FlyControl.E = 1
             end
             if UseFlyGyro then
                 pcall(function()
@@ -548,24 +548,24 @@ function UniversalModules.Fly(Enabled)
         FlyKeyUp = Mouse.KeyUp:Connect(function(Key)
             local Key = Key:lower()
             if Key == "w" then
-                Control.W = 0
+                FlyControl.W = 0
             elseif Key == "s" then
-                Control.S = 0
+                FlyControl.S = 0
             elseif Key == "a" then
-                Control.A = 0
+                FlyControl.A = 0
             elseif Key == "d" then
-                Control.D = 0
+                FlyControl.D = 0
             elseif QEFly and Key == "q" then
-                Control.Q = 0
+                FlyControl.Q = 0
             elseif QEFly and Key == "e" then
-                Control.E = 0
+                FlyControl.E = 0
             end
         end)
         NonQEFlyKeyDown = not QEFly and UIP.InputBegan:Connect(function(Key)
             if Key.KeyCode == Enum.KeyCode.LeftShift then
-                Control.LeftShift = 1
+                FlyControl.LeftShift = 1
             elseif Key.KeyCode == Enum.KeyCode.Space then
-                Control.Space = 1
+                FlyControl.Space = 1
             end
             if UseFlyGyro then
                 pcall(function()
@@ -575,9 +575,9 @@ function UniversalModules.Fly(Enabled)
         end)
         NonQEFlyKeyUp = not QEFly and UIP.InputEnded:Connect(function(Key)
             if Key.KeyCode == Enum.KeyCode.LeftShift then
-                Control.LeftShift = 0
+                FlyControl.LeftShift = 0
             elseif Key.KeyCode == Enum.KeyCode.Space then
-                Control.Space = 0
+                FlyControl.Space = 0
             end
         end)
     else
@@ -598,6 +598,7 @@ function UniversalModules.Fly(Enabled)
             NonQEFlyKeyDown = nil
             NonQEFlyKeyUp = nil
         end
+        FlyControl = nil
         local Character = Speaker.Character
         if Character then
             local RootPart = Character:FindFirstChild("HumanoidRootPart")
