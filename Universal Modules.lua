@@ -419,16 +419,28 @@ function UniversalModules.AntiVoid(Enabled)
     if Enabled then
         CurrentVoid = Workspace.FallenPartsDestroyHeight
         Workspace.FallenPartsDestroyHeight = (0 / 0)
+        print("AntiVoid: Enabled = true, FallenPartsDestroyHeight set to NaN") -- 添加打印
         LockConnections.V = Workspace:GetPropertyChangedSignal("FallenPartsDestroyHeight"):Connect(function()
-            CurrentVoid = Workspace.FallenPartsDestroyHeight
-            Workspace.FallenPartsDestroyHeight = (0 / 0)
+            print("PropertyChangedSignal triggered!") -- 添加打印， 观察是否仍然触发
+            CurrentVoid = Workspace.FallenPartsDestroyHeight -- 这行实际上不需要了
+            Workspace.FallenPartsDestroyHeight = (0 / 0) -- 这行是循环的根源
         end)
+        print("AntiVoid: PropertyChangedSignal connected") -- 添加打印
     else
+        print("AntiVoid: Enabled = false, Disconnecting...") -- 添加打印
         if LockConnections.V then
+            print("AntiVoid: LockConnections.V exists, disconnecting...") -- 添加打印
             LockConnections.V:Disconnect()
+            print("AntiVoid: LockConnections.V disconnected") -- 添加打印
             LockConnections.V = nil
+            print("AntiVoid: LockConnections.V set to nil") -- 添加打印
+        else
+            print("AntiVoid: LockConnections.V does not exist") -- 添加打印, 理论上不应该发生，但以防万一
         end
+        print("AntiVoid: Setting FallenPartsDestroyHeight back to CurrentVoid") -- 添加打印
         Workspace.FallenPartsDestroyHeight = CurrentVoid
+        print("AntiVoid: FallenPartsDestroyHeight reset to CurrentVoid") -- 添加打印
+        print("AntiVoid: Enabled = false, Finished") -- 添加打印
     end
 end
 
