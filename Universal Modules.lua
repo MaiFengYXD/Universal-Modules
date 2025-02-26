@@ -457,46 +457,70 @@ end
 
 --|| Fly Function ||--
 
+FlyControl = (QEFly and {W = 0, S = 0, A = 0, D = 0, Q = 0, E = 0}) or {W = 0, S = 0, A = 0, D = 0, LeltShift = 0, Space = 0}
+
 if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-    if FlyControl then
-        FlyControl.W = 1
-    end
+    FlyControl.W = 1
 end
 if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-    if FlyControl then
-        FlyControl.S = 1
-    end
+    FlyControl.S = 1
 end
 if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-    if FlyControl then
-        FlyControl.A = 1
-    end
+    FlyControl.A = 1
 end
 if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-    if FlyControl then
+    FlyControl.D = 1
+end
+if UserInputService:IsKeyDown(Enum.KeyCode.Q) and QEFly then
+    FlyControl.Q = 1
+end
+if UserInputService:IsKeyDown(Enum.KeyCode.E) and QEFly then
+    FlyControl.E = 1
+end
+if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) and not QEFly then
+    FlyControl.LeltShift = 1
+end
+if UserInputService:IsKeyDown(Enum.KeyCode.Space) and not QEFly then
+    FlyControl.Space = 1
+end
+
+Mouse.KeyDown:Connect(function(Key)
+    local Key = Key:lower()
+    if Key == "w" then
+        FlyControl.W = 1
+    elseif Key == "s" then
+        FlyControl.S = 1
+    elseif Key == "a" then
+        FlyControl.A = 1
+    elseif Key == "d" then
         FlyControl.D = 1
-    end
-end
-if UserInputService:IsKeyDown(Enum.KeyCode.Q) then
-    if FlyControl and QEFly then
+    elseif QEFly and Key == "q" then
         FlyControl.Q = 1
-    end
-end
-if UserInputService:IsKeyDown(Enum.KeyCode.E) then
-    if FlyControl and QEFly then
+    elseif QEFly and Key == "e" then
         FlyControl.E = 1
     end
-end
-if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-    if FlyControl and not QEFly then
-        FlyControl.LeltShift = 1
+    if UseFlyGyro and UniversalModules.Flying then
+        pcall(function()
+            Camera.CameraType = Enum.CameraType.Track
+        end)
     end
-end
-if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-    if FlyControl and not QEFly then
-        FlyControl.Space = 1
+end)
+Mouse.KeyUp:Connect(function(Key)
+    local Key = Key:lower()
+    if Key == "w" then
+        FlyControl.W = 0
+    elseif Key == "s" then
+        FlyControl.S = 0
+    elseif Key == "a" then
+        FlyControl.A = 0
+    elseif Key == "d" then
+        FlyControl.D = 0
+    elseif QEFly and Key == "q" then
+        FlyControl.Q = 0
+    elseif QEFly and Key == "e" then
+        FlyControl.E = 0
     end
-end
+end)
 
 function UniversalModules.Fly(Enabled)
     if Enabled then
@@ -504,10 +528,9 @@ function UniversalModules.Fly(Enabled)
             Library:Notify(GlobalText.WeaponryCheck, 5)
             return warn(GlobalText.WeaponryCheck)
         end
-        local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
         UniversalModules.Flying = true
+        local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
         local RootPart = Character:WaitForChild("HumanoidRootPart")
-        FlyControl = (QEFly and {W = 0, S = 0, A = 0, D = 0, Q = 0, E = 0}) or {W = 0, S = 0, A = 0, D = 0, LeltShift = 0, Space = 0}
         local FlyKeyDown = nil
         local FlyKeyUp = nil
         local FlyVelocity = Instance.new("BodyVelocity")
@@ -551,43 +574,6 @@ function UniversalModules.Fly(Enabled)
                 FlyGyro.CFrame = Camera.CFrame
             end
         end)
-        FlyKeyDown = Mouse.KeyDown:Connect(function(Key)
-            local Key = Key:lower()
-            if Key == "w" then
-                FlyControl.W = 1
-            elseif Key == "s" then
-                FlyControl.S = 1
-            elseif Key == "a" then
-                FlyControl.A = 1
-            elseif Key == "d" then
-                FlyControl.D = 1
-            elseif QEFly and Key == "q" then
-                FlyControl.Q = 1
-            elseif QEFly and Key == "e" then
-                FlyControl.E = 1
-            end
-            if UseFlyGyro then
-                pcall(function()
-                    Camera.CameraType = Enum.CameraType.Track
-                end)
-            end
-        end)
-        FlyKeyUp = Mouse.KeyUp:Connect(function(Key)
-            local Key = Key:lower()
-            if Key == "w" then
-                FlyControl.W = 0
-            elseif Key == "s" then
-                FlyControl.S = 0
-            elseif Key == "a" then
-                FlyControl.A = 0
-            elseif Key == "d" then
-                FlyControl.D = 0
-            elseif QEFly and Key == "q" then
-                FlyControl.Q = 0
-            elseif QEFly and Key == "e" then
-                FlyControl.E = 0
-            end
-        end)
         NonQEFlyKeyDown = not QEFly and UserInputService.InputBegan:Connect(function(Key)
             if Key.KeyCode == Enum.KeyCode.LeftShift then
                 FlyControl.LeltShift = 1
@@ -613,19 +599,12 @@ function UniversalModules.Fly(Enabled)
             LockConnections.Fly:Disconnect()
             LockConnections.Fly = nil
         end
-        if FlyKeyDown or FlyKeyUp then
-            FlyKeyDown:Disconnect()
-            FlyKeyUp:Disconnect()
-            FlyKeyDown = nil
-            FlyKeyUp = nil
-        end
         if NonQEFlyKeyDown or NonQEFlyKeyUp then
             NonQEFlyKeyDown:Disconnect()
             NonQEFlyKeyUp:Disconnect()
             NonQEFlyKeyDown = nil
             NonQEFlyKeyUp = nil
         end
-        FlyControl = nil
         local Character = Speaker.Character
         if Character then
             local RootPart = Character:FindFirstChild("HumanoidRootPart")
