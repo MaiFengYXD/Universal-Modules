@@ -407,7 +407,6 @@ function UniversalModules.VehicleNoclip(Enabled)
                 end
             else
                 VNoclipNotified = false
-                VNoclipNotified2 = false
                 VNocliping = false
                 if not VNoclipNotified2 then
                     VNoclipNotified2 = true
