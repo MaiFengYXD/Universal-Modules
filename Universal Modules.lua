@@ -76,18 +76,18 @@ function UniversalModules.AntiAFK(Enabled)
             if AFKTimer >= AFKTime then
                 AFKTimes = AFKTimes + 1
                 if AntiAFKNotifyEnabled then
-                    Library:Notify((GlobalText.AntiAFKNotify .. AFKTimes .. GlobalText.AntiAFKNotify2), 5)
+                    Library:Notify((GlobalText.AntiAFKNotify .. AFKTimes .. GlobalText.AntiAFKNotify2), 3)
                 end
                 if AFKMousemoverel then
-                    mousemoverel(-1, -1)
+                    mousemoverel(-5, -5)
                     Heartbeat:Wait()
-                    mousemoverel(1, 1)
+                    mousemoverel(5, 5)
                     AFKTimer = 0
                 elseif AFKMousemoveabs then
-                    local MousePos = Mouse.Position
+                    local MousePos = Vector2.new(Mouse.X, Mouse.Y)
                     mousemoveabs(0, 0)
                     Heartbeat:Wait()
-                    mousemoveabs(MousePos.X, MousePos.Y)
+                    mousemoveabs(MousePos)
                     AFKTimer = 0
                 elseif AFKMouseClick1 then
                     mouse1press()
@@ -390,7 +390,7 @@ end
 function UniversalModules.Fly(Enabled)
     if Enabled then
         local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
-        Flying = true
+        UniversalModules.Flying = true
         local RootPart = Character:WaitForChild("HumanoidRootPart")
         local Control = (QEFly and {W = 0, S = 0, A = 0, D = 0, Q = 0, E = 0}) or {W = 0, S = 0, A = 0, D = 0, LeftShift = 0, Space = 0}
         local FlyKeyDown = nil
@@ -516,6 +516,7 @@ function UniversalModules.Fly(Enabled)
             end
         end)
     else
+        UniversalModules.Flying = false
         if LockConnections.Fly then
             LockConnections.Fly:Disconnect()
             LockConnections.Fly = nil
