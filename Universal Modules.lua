@@ -626,8 +626,8 @@ function UniversalModules.Fly(Enabled)
         end
         local Character = Speaker.Character
         if Character then
-            BodyGyro = BodyGyro and BodyGyro:Destroy()
-            BodyVelocity = BodyVelocity and BodyVelocity:Destroy()
+            FlyGyro = FlyGyro and FlyGyro:Destroy()
+            FlyVelocity = FlyVelocity and FlyVelocity:Destroy()
             local RootPart = Character:FindFirstChild("HumanoidRootPart")
             local Humanoid = Character:FindFirstChild("Humanoid")
             if Humanoid then
