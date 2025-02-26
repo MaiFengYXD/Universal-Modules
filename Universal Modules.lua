@@ -569,7 +569,6 @@ function UniversalModules.Fly(Enabled)
                 Character:FindFirstChild("Humanoid").PlatformStand = true
             elseif SitFly then
                 Character:FindFirstChild("Humanoid").Sit = true
-                LetMeSit = true
             end
             if FlyControl.W == 1 then
                 MoveDirection = MoveDirection + Camera.CFrame.LookVector
@@ -631,9 +630,8 @@ function UniversalModules.Fly(Enabled)
             local Humanoid = Character:FindFirstChild("Humanoid")
             if Humanoid then
                 Humanoid.PlatformStand = false
-                if LetMeSit then
-                    Humanoid.Sit = Humanoid.Sit or true
-                    LetMeSit = SitFly
+                if not Humanoid.SeatPart then
+                    Humanoid.Sit = false
                 end
             end
             if RootPart then
