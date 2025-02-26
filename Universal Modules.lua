@@ -43,8 +43,8 @@ AFKMousemoverel = true
 AFKTime = 60
 AFKTimes = 0
 Mouse = Speaker:GetMouse()
-CurrentFPS = getfpscap() or 240
-TargetFPS = CurrentFPS
+UniversalModules.CurrentFPS = getfpscap() or 240
+TargetFPS = UniversalModules.CurrentFPS
 ModedWalkSpeed = Speaker.Character:FindFirstChild("Humanoid").WalkSpeed or 16
 ModedJumpPower = Speaker.Character:FindFirstChild("Humanoid").JumpPower or 50
 ModedGravity = Workspace.Gravity or 196.2
@@ -159,10 +159,10 @@ end
 function UniversalModules.FPSCap(Enabled)
     FPSCapEnabled = Enabled
     if Enabled then
-        CurrentFPS = getfpscap() or 240
+        UniversalModules.CurrentFPS = getfpscap() or 240
         setfpscap(TargetFPS)
     else
-        setfpscap(CurrentFPS)
+        setfpscap(UniversalModules.CurrentFPS)
     end
 end
 
@@ -200,6 +200,7 @@ end
 --|| Walk Speed Function ||--
 
 function UniversalModules.WalkSpeed(Enabled)
+    WalkSpeedChange = Enabled
     if Enabled then
         local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
         local Humanoid = Character:WaitForChild("Humanoid")
@@ -240,11 +241,21 @@ end
 
 function UniversalModules.WalkSpeedValue(Number)
     ModedWalkSpeed = Number
+    if WalkSpeedChange then
+        local Character = Speaker.Character
+        if Character then
+            local Humanoid = Character:FindFirstChild("Humanoid")
+            if Humanoid then
+                Humanoid.WalkSpeed = ModedWalkSpeed
+            end
+        end
+    end
 end
 
 --|| Jump Power Function ||--
 
 function UniversalModules.JumpPower(Enabled)
+    JumpPowerChange = Enabled
     if Enabled then
         local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
         local Humanoid = Character:WaitForChild("Humanoid")
@@ -300,11 +311,21 @@ end
 
 function UniversalModules.JumpPowerValue(Number)
     ModedJumpPower = Number
+    if JumpPowerChange then
+        local Character = Speaker.Character
+        if Character then
+            local Humanoid = Character:FindFirstChild("Humanoid")
+            if Humanoid then
+                Humanoid.JumpPower = ModedJumpPower
+            end
+        end
+    end
 end
 
 --|| Gravity Function ||--
 
 function UniversalModules.Gravity(Enabled)
+    GravityChange = Enabled
     if Enabled then
         CurrentGravity = Workspace.Gravity
         Workspace.Gravity = ModedGravity
@@ -322,6 +343,9 @@ end
 
 function UniversalModules.GravityValue(Number)
     ModedGravity = Number
+    if GravityChange then
+        Workspace.Gravity = ModedGravity
+    end
 end
 
 --|| Noclip Function ||--
