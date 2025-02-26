@@ -48,6 +48,7 @@ TargetFPS = UniversalModules.CurrentFPS
 ModedWalkSpeed = Speaker.Character:FindFirstChild("Humanoid").WalkSpeed or 16
 ModedJumpPower = Speaker.Character:FindFirstChild("Humanoid").JumpPower or 50
 ModedGravity = Workspace.Gravity or 196.2
+CurrentVoid = Workspace.FallenPartsDestroyHeight
 Rivals = (game.PlaceId == 17625359962 and true) or false
 Weaponry = (game.PlaceId == 3297964905 and true) or false
 VFly = false
@@ -409,6 +410,21 @@ function UniversalModules.VehicleNoclip(Enabled)
             Part.CanCollide = true
         end
         VNoclipParts = {}
+    end
+end
+
+--|| Anti Void ||--
+
+function UniversalModules.AntiVoid(Enabled)
+    if Enabled then
+        CurrentVoid = Workspace.FallenPartsDestroyHeight
+        Workspace.FallenPartsDestroyHeight = (0 / 0)
+        LockConnections.V = (LockConnections.V and LockConnections.V:Disconnect()) or Workspace:GetPropertyChangedSignal("FallenPartsDestroyHeight"):Connect(function()
+            CurrentVoid = Workspace.FallenPartsDestroyHeight
+            Workspace.FallenPartsDestroyHeight = (0 / 0)
+        end)
+    else
+        Workspace.FallenPartsDestroyHeight = CurrentVoid
     end
 end
 
