@@ -388,7 +388,7 @@ function UniversalModules.VehicleNoclip(Enabled)
                 local Seat = Humanoid.SeatPart
                 local VehicleModel = Seat.Parent
                 if VehicleModel.ClassName == "Model" then
-                    NoclipToggle:SetValue(true)
+                    NoclipKeyPicker:SetState(true)
                     for _, Part in pairs(VehicleModel:GetDescendants()) do
                         if Part:IsA("BasePart") and Part.CanCollide then
                             Part.CanCollide = false
