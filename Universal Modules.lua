@@ -46,9 +46,12 @@ AFKTimes = 0
 Mouse = Speaker:GetMouse()
 UniversalModules.CurrentFPS = getfpscap() or 240
 TargetFPS = UniversalModules.CurrentFPS
-ModedWalkSpeed = Speaker.Character:FindFirstChild("Humanoid").WalkSpeed or 16
-ModedJumpPower = Speaker.Character:FindFirstChild("Humanoid").JumpPower or 50
-ModedGravity = Workspace.Gravity or 196.2
+CurrentWalkSpeed = Speaker.Character:FindFirstChild("Humanoid").WalkSpeed or 16
+CurrentJumpPower = Speaker.Character:FindFirstChild("Humanoid").JumpPower or 50
+CurrentGravity = Workspace.Gravity or 196.2
+ModedWalkSpeed = CurrentWalkSpeed
+ModedJumpPower = CurrentJumpPower
+ModedGravity = CurrentGravity
 CurrentVoid = Workspace.FallenPartsDestroyHeight
 Rivals = (game.PlaceId == 17625359962 and true) or false
 Weaponry = (game.PlaceId == 3297964905 and true) or false
