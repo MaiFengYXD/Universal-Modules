@@ -45,10 +45,13 @@ AFKTimes = 0
 Mouse = Speaker:GetMouse()
 CurrentFPS = getfpscap() or 240
 TargetFPS = CurrentFPS
+ModedWalkSpeed = Speaker.Character:FindFirstChild("Humanoid").WalkSpeed or 16
+ModedJumpPower = Speaker.Character:FindFirstChild("Humanoid").JumpPower or 50
+ModedGravity = Workspace.Gravity or 196.2
 Rivals = (game.PlaceId == 17625359962 and true) or false
 Weaponry = (game.PlaceId == 3297964905 and true) or false
 VFly = false
-Flying = false
+UniversalModules.Flying = false
 SitFly = false
 QEFly = true
 UseFlyGyro = true
@@ -389,6 +392,10 @@ end
 
 function UniversalModules.Fly(Enabled)
     if Enabled then
+        if Weaponry then
+            Library:Notify(GlobalText.WeaponryCheck, 5)
+            return warn(GlobalText.WeaponryCheck)
+        end
         local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
         UniversalModules.Flying = true
         local RootPart = Character:WaitForChild("HumanoidRootPart")
