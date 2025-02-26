@@ -79,9 +79,9 @@ function UniversalModules.AntiAFK(Enabled)
                     Library:Notify((GlobalText.AntiAFKNotify .. AFKTimes .. GlobalText.AntiAFKNotify2), 3)
                 end
                 if AFKMousemoverel then
-                    mousemoverel(-5, -5)
+                    mousemoverel(0, -5)
                     Heartbeat:Wait()
-                    mousemoverel(5, 5)
+                    mousemoverel(0, 5)
                     AFKTimer = 0
                 elseif AFKMousemoveabs then
                     local MousePos = Vector2.new(Mouse.X, Mouse.Y)
