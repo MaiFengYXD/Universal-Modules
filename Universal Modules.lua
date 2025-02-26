@@ -357,11 +357,11 @@ function UniversalModules.Noclip(Enabled)
         NoclipParts = {}
         LockConnections.NC = (LockConnections.NC and LockConnections.NC:Disconnect()) or Stepped:Connect(function()
             local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
-            for _, Part in pairs(Character:GetDescendants()) do
-                if Part:IsA("BasePart") and Part.CanCollide then
-                    Part.CanCollide = false
-                    if not table.find(NoclipParts, Part) then
-                        table.insert(NoclipParts, Part)
+            for i,v in pairs(Character:GetDescendants()) do
+                if v:IsA("BasePart") and v.CanCollide then
+                    v.CanCollide = false
+                    if not table.find(NoclipParts, v) then
+                        table.insert(NoclipParts, v)
                     end
                 end
             end
@@ -371,8 +371,8 @@ function UniversalModules.Noclip(Enabled)
             LockConnections.NC:Disconnect()
             LockConnections.NC = nil
         end
-        for _, Part in pairs(NoclipParts) do
-            Part.CanCollide = true
+        for i,v in pairs(NoclipParts) do
+            v.CanCollide = true
         end
         NoclipParts = {}
     end
@@ -390,11 +390,11 @@ function UniversalModules.VehicleNoclip(Enabled)
                 local VehicleModel = Seat.Parent
                 if VehicleModel.ClassName == "Model" then
                     NoclipToggle:SetValue(true)
-                    for _, Part in pairs(VehicleModel:GetDescendants()) do
-                        if Part:IsA("BasePart") and Part.CanCollide then
-                            Part.CanCollide = false
-                            if not table.find(VNoclipParts, Part) then
-                                table.insert(VNoclipParts, Part)
+                    for i,v in pairs(VehicleModel:GetDescendants()) do
+                        if v:IsA("BasePart") and v.CanCollide then
+                            v.CanCollide = false
+                            if not table.find(VNoclipParts, v) then
+                                table.insert(VNoclipParts, v)
                             end
                         end
                     end
@@ -420,8 +420,8 @@ function UniversalModules.VehicleNoclip(Enabled)
             LockConnections.VNC:Disconnect()
             LockConnections.VNC = nil
         end
-        for _, Part in pairs(VNoclipParts) do
-            Part.CanCollide = true
+        for i,v in pairs(VNoclipParts) do
+            v.CanCollide = true
         end
         VNoclipParts = {}
     end
@@ -470,29 +470,6 @@ function UniversalModules.Fly(Enabled)
             FlyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
             FlyGyro.CFrame = Camera.CFrame
             FlyGyro.Parent = RootPart
-        end
-        local UIP = UserInputService
-        if UIP:IsKeyDown(Enum.KeyCode.W) then
-            FlyControl.W = 1
-        end
-        if UIP:IsKeyDown(Enum.KeyCode.S) then
-            FlyControl.S = 1
-        end
-        if UIP:IsKeyDown(Enum.KeyCode.A) then
-            FlyControl.A = 1
-        end
-        if UIP:IsKeyDown(Enum.KeyCode.D) then
-            FlyControl.D = 1
-        end
-        if QEFly and UIP:IsKeyDown(Enum.KeyCode.Q) then
-            FlyControl.Q = 1
-        elseif UIP:IsKeyDown(Enum.KeyCode.LeftShift) then
-            FlyControl.LeftShift = 1
-        end
-        if QEFly and UIP:IsKeyDown(Enum.KeyCode.E) then
-            FlyControl.E = 1
-        elseif UIP:IsKeyDown(Enum.KeyCode.Space) then
-            FlyControl.Space = 1
         end
         LockConnections.Fly = Stepped:Connect(function()
             local MoveDirection = Vector3.new(0, 0, 0)
@@ -561,7 +538,7 @@ function UniversalModules.Fly(Enabled)
                 FlyControl.E = 0
             end
         end)
-        NonQEFlyKeyDown = not QEFly and UIP.InputBegan:Connect(function(Key)
+        NonQEFlyKeyDown = not QEFly and UserInputService.InputBegan:Connect(function(Key)
             if Key.KeyCode == Enum.KeyCode.LeftShift then
                 FlyControl.LeftShift = 1
             elseif Key.KeyCode == Enum.KeyCode.Space then
@@ -573,7 +550,7 @@ function UniversalModules.Fly(Enabled)
                 end)
             end
         end)
-        NonQEFlyKeyUp = not QEFly and UIP.InputEnded:Connect(function(Key)
+        NonQEFlyKeyUp = not QEFly and UserInputService.InputEnded:Connect(function(Key)
             if Key.KeyCode == Enum.KeyCode.LeftShift then
                 FlyControl.LeftShift = 0
             elseif Key.KeyCode == Enum.KeyCode.Space then
@@ -620,6 +597,26 @@ function UniversalModules.Fly(Enabled)
                 end
             end
         end
+    end
+end
+
+FlyKeybinds = {
+    {KeyCode = Enum.KeyCode.W, KeyName = "W", QEFly = false},
+    {KeyCode = Enum.KeyCode.S, KeyName = "S", QEFly = false},
+    {KeyCode = Enum.KeyCode.A, KeyName = "A", QEFly = false},
+    {KeyCode = Enum.KeyCode.D, KeyName = "D", QEFly = false},
+    {KeyCode = Enum.KeyCode.Q, KeyName = "Q", QEFly = true},
+    {KeyCode = Enum.KeyCode.E, KeyName = "E", QEFly = true},
+    {KeyCode = Enum.KeyCode.LeftShift, KeyName = "LeftShift", QEFly = true, NoQEFly = true},
+    {KeyCode = Enum.KeyCode.Space, KeyName = "Space", QEFly = true, NoQEFly = true}
+}
+for i,v in pairs(FlyKeybinds) do
+    local A = FlyControl
+    if v.QEFly then
+        A = (v.NoQEFly and not QEFly or QEFly) and FlyControl
+    end
+    if A and UserInputService:IsKeyDown(v.KeyCode) then
+        FlyControl[v.KeyName] = 1
     end
 end
 
