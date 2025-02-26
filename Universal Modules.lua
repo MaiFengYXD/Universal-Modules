@@ -206,19 +206,22 @@ function UniversalModules.WalkSpeed(Enabled)
     if Enabled then
         local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
         local Humanoid = Character:WaitForChild("Humanoid")
-        CurrentWalkSpeed = Humanoid.WalkSpeed
         if Humanoid then
+            CurrentWalkSpeed = Humanoid.WalkSpeed
             Humanoid.WalkSpeed = ModedWalkSpeed
         end
         LockConnections.WS = Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+            CurrentWalkSpeed = Humanoid.WalkSpeed
             Humanoid.WalkSpeed = ModedWalkSpeed
         end)
         LockConnections.WSCA = Speaker.CharacterAdded:Connect(function(Character)
             local Humanoid = Character:WaitForChild("Humanoid")
             if Humanoid then
+                CurrentWalkSpeed = Humanoid.WalkSpeed
                 Humanoid.WalkSpeed = ModedWalkSpeed
             end
             LockConnections.WS = (LockConnections.WS and LockConnections.WS:Disconnect()) or Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+                CurrentWalkSpeed = Humanoid.WalkSpeed
                 Humanoid.WalkSpeed = ModedWalkSpeed
             end)
         end)
@@ -265,13 +268,14 @@ function UniversalModules.JumpPower(Enabled)
             Humanoid.UseJumpPower = true
             NotUsingJumpPower = true
         end
-        CurrentJumpPower = Humanoid.JumpPower
         if Humanoid then
+            CurrentJumpPower = Humanoid.JumpPower
             Humanoid.UseJumpPower = true
             Humanoid.JumpPower = ModedJumpPower
         end
         LockConnections.JP = Humanoid:GetPropertyChangedSignal("JumpPower"):Connect(function()
             Humanoid.UseJumpPower = true
+            CurrentJumpPower = Humanoid.JumpPower
             Humanoid.JumpPower = ModedJumpPower
         end)
         LockConnections.JPCA = Speaker.CharacterAdded:Connect(function(Character)
@@ -282,10 +286,12 @@ function UniversalModules.JumpPower(Enabled)
             end
             if Humanoid then
                 Humanoid.UseJumpPower = true
+                CurrentJumpPower = Humanoid.JumpPower
                 Humanoid.JumpPower = ModedJumpPower
             end
             LockConnections.JP = (LockConnections.JP and LockConnections.JP:Disconnect()) or Humanoid:GetPropertyChangedSignal("JumpPower"):Connect(function()
                 Humanoid.UseJumpPower = true
+                CurrentJumpPower = Humanoid.JumpPower
                 Humanoid.JumpPower = ModedJumpPower
             end)
         end)
@@ -600,30 +606,60 @@ function UniversalModules.Fly(Enabled)
     end
 end
 
-FlyKeybinds = {
-    {KeyCode = Enum.KeyCode.W, KeyName = "W", QEFly = false},
-    {KeyCode = Enum.KeyCode.S, KeyName = "S", QEFly = false},
-    {KeyCode = Enum.KeyCode.A, KeyName = "A", QEFly = false},
-    {KeyCode = Enum.KeyCode.D, KeyName = "D", QEFly = false},
-    {KeyCode = Enum.KeyCode.Q, KeyName = "Q", QEFly = true},
-    {KeyCode = Enum.KeyCode.E, KeyName = "E", QEFly = true},
-    {KeyCode = Enum.KeyCode.LeftShift, KeyName = "LeftShift", QEFly = true, NoQEFly = true},
-    {KeyCode = Enum.KeyCode.Space, KeyName = "Space", QEFly = true, NoQEFly = true}
-}
-for i,v in pairs(FlyKeybinds) do
-    local A = FlyControl
-    if v.QEFly then
-        A = (v.NoQEFly and not QEFly or QEFly) and FlyControl
-    end
-    if A and UserInputService:IsKeyDown(v.KeyCode) then
-        FlyControl[v.KeyName] = 1
-    end
+if UserInputService:IsKeyDown(Enum.KeyCode.W) and FlyControl then
+    FlyControl.W = 1
 end
+if UserInputService:IsKeyDown(Enum.KeyCode.S) and FlyControl then
+    FlyControl.S = 1
+end
+if UserInputService:IsKeyDown(Enum.KeyCode.A) and FlyControl then
+    FlyControl.A = 1
+end
+if UserInputService:IsKeyDown(Enum.KeyCode.D) and FlyControl then
+    FlyControl.D = 1
+end
+if QEFly and UserInputService:IsKeyDown(Enum.KeyCode.Q) and FlyControl then
+    FlyControl.Q = 1
+end
+if QEFly and UserInputService:IsKeyDown(Enum.KeyCode.E) and FlyControl then
+    FlyControl.E = 1
+end
+if not QEFly and UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) and FlyControl then
+    FlyControl.LeftShift = 1
+end
+if not QEFly and UserInputService:IsKeyDown(Enum.KeyCode.Space) and FlyControl then
+    FlyControl.Space = 1
+end
+
+--|| Speaker Died Connection ||--
 
 LockConnections.SpeakerDied = Speaker.CharacterAdded:Connect(function(Character)
     if UniversalModules.Flying then
         FlyToggle:SetValue(false)
     end
 end)
+
+--|| Exit Function ||--
+
+function UniversalModules:Exit()
+    pcall(function()
+        UniversalModules.AntiAFK(false)
+        UniversalModules.FPSCap(false)
+        UniversalModules.WalkSpeed(false)
+        UniversalModules.JumpPower(false)
+        UniversalModules.Gravity(false)
+        UniversalModules.Noclip(false)
+        UniversalModules.VehicleNoclip(false)
+        UniversalModules.AntiVoid(false)
+        UniversalModules.Fly(false)
+        for i,v in pairs(LockConnections) do
+            if v then
+                v:Disconnect()
+            end
+        end
+    end)
+end
+
+--|| Return Table ||--
 
 return UniversalModules
