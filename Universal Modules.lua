@@ -563,7 +563,7 @@ function UniversalModules.Fly(Enabled)
             FlyGyro.CFrame = Camera.CFrame
             FlyGyro.Parent = RootPart
         end
-        LockConnections.Fly = Stepped:Connect(function()
+        LockConnections.Fly = (LockConnections.Fly and LockConnections.Fly:Disconnect()) or Stepped:Connect(function()
             local MoveDirection = Vector3.new(0, 0, 0)
             if not VFly and not SitFly then
                 Character:FindFirstChild("Humanoid").PlatformStand = true
@@ -642,13 +642,8 @@ end
 
 --|| Speaker Died Connection ||--
 
-LockConnections.SpeakerDied = Speaker.CharacterAdded:Connect(function(Character)
-    if UniversalModules.Flying then
-        UniversalModules.Fly(false)
-        if Character:WaitForChild("HumanoidRootPart") then
-            UniversalModules.Fly(true)
-        end
-    end
+LockConnections.SpeakerDied = Speaker.CharacterRemoving:Connect(function(Character)
+    FlyToggle:SetValue(false)
 end)
 
 --|| Exit Function ||--
@@ -678,5 +673,5 @@ end
 
 --|| Return Table ||--
 
-print("Time: 1:32")
+print("Time: 1:37")
 return UniversalModules
