@@ -477,7 +477,7 @@ end
 --|| Fly Function ||--
 
 FlyControl = (QEFly and {W = 0, S = 0, A = 0, D = 0, Q = 0, E = 0}) or {W = 0, S = 0, A = 0, D = 0, LeltShift = 0, Space = 0}
-
+--[[
 if UserInputService:IsKeyDown(Enum.KeyCode.W) then
     FlyControl.W = 1
 end
@@ -490,19 +490,19 @@ end
 if UserInputService:IsKeyDown(Enum.KeyCode.D) then
     FlyControl.D = 1
 end
-if UserInputService:IsKeyDown(Enum.KeyCode.Q) and QEFly then
-    FlyControl.Q = 1
+if UserInputService:IsKeyDown(Enum.KeyCode.Q) then
+    FlyControl.Q = QEFly and 1
 end
-if UserInputService:IsKeyDown(Enum.KeyCode.E) and QEFly then
-    FlyControl.E = 1
+if UserInputService:IsKeyDown(Enum.KeyCode.E) then
+    FlyControl.E = QEFly and 1
 end
-if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) and not QEFly then
-    FlyControl.LeltShift = 1
+if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+    FlyControl.LeltShift = not QEFly and 1
 end
-if UserInputService:IsKeyDown(Enum.KeyCode.Space) and not QEFly then
-    FlyControl.Space = 1
+if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+    FlyControl.Space = not QEFly and 1
 end
-
+]]
 Mouse.KeyDown:Connect(function(Key)
     local Key = Key:lower()
     if Key == "w" then
