@@ -419,7 +419,7 @@ function UniversalModules.AntiVoid(Enabled)
     if Enabled then
         CurrentVoid = Workspace.FallenPartsDestroyHeight
         Workspace.FallenPartsDestroyHeight = (0 / 0)
-        LockConnections.V = (LockConnections.V and LockConnections.V:Disconnect()) or Workspace:GetPropertyChangedSignal("FallenPartsDestroyHeight"):Connect(function()
+        LockConnections.V = Workspace:GetPropertyChangedSignal("FallenPartsDestroyHeight"):Connect(function()
             CurrentVoid = Workspace.FallenPartsDestroyHeight
             Workspace.FallenPartsDestroyHeight = (0 / 0)
         end)
