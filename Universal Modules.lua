@@ -12,7 +12,7 @@ $$ | \_/ $$ |$$ |      \$$$$$$$\ \$$$$$$$\ \$$$$$$$\
 Universal Modules | MaiFengYXD
 Alpha Edidtion 1  | CC0-1.0 license
 
-# This Version was Last Edited on 2025/2/26 #
+# This Version was Last Edited on 2025/2/25 #
 # You are Free to Fully Operate the Source Code #
 
 Issues Report on Github or https://discord.gg/YBQUd8X8PK
@@ -378,6 +378,7 @@ function UniversalModules.Noclip(Enabled)
 end
 
 function UniversalModules.VehicleNoclip(Enabled)
+    VNoclipNotified2 = false
     if Enabled then
         VNoclipParts = {}
         LockConnections.VNC = (LockConnections.VNC and LockConnections.VNC:Disconnect()) or Stepped:Connect(function(Delta)
@@ -396,8 +397,20 @@ function UniversalModules.VehicleNoclip(Enabled)
                             end
                         end
                     end
+                    VNocliping = true
+                    if not VNoclipNotified then
+                        VNoclipNotified = true
+                        Library:Notify(GlobalText.VehicleNoclipNotify, 5)
+                    end
                 elseif VehicleModel.ClassName ~= "Model" then
                     VehicleModel = VehicleModel.Parent
+                end
+            else
+                VNoclipNotified = false
+                VNocliping = false
+                if not VNoclipNotified2 then
+                    VNoclipNotified2 = true
+                    Library:Notify(GlobalText.VehicleNoclipNotify2, 5)
                 end
             end
         end)
