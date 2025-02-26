@@ -604,7 +604,9 @@ function UniversalModules.Fly(Enabled)
             local Humanoid = Character:FindFirstChild("Humanoid")
             if Humanoid then
                 Humanoid.PlatformStand = false
-                Humanoid.Sit = false
+                if not Humanoid.SeatPart then
+                    Humanoid.Sit = false
+                end
             end
             if RootPart then
                 local BodyVelocity = RootPart:FindFirstChild("BodyVelocity")
