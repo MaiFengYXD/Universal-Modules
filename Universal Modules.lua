@@ -601,15 +601,19 @@ function UniversalModules.Fly(Enabled)
         if Character then
             local RootPart = Character:FindFirstChild("HumanoidRootPart")
             local Humanoid = Character:FindFirstChild("Humanoid")
-            Humanoid.PlatformStand = false
-            Humanoid.Sit = false
-            local BodyVelocity = RootPart:FindFirstChild("BodyVelocity")
-            local BodyGyro = RootPart:FindFirstChild("BodyGyro")
-            if BodyVelocity then
-                BodyVelocity:Destroy()
+            if Humanoid then
+                Humanoid.PlatformStand = false
+                Humanoid.Sit = false
             end
-            if BodyGyro then
-                BodyGyro:Destroy()
+            if RootPart then
+                local BodyVelocity = RootPart:FindFirstChild("BodyVelocity")
+                local BodyGyro = RootPart:FindFirstChild("BodyGyro")
+                if BodyVelocity then
+                    BodyVelocity:Destroy()
+                end
+                if BodyGyro then
+                    BodyGyro:Destroy()
+                end
             end
         end
     end
