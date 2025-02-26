@@ -13,8 +13,8 @@ Creator | MaiFengYXD
 License | CC0-1.0
 Version | 0.0.5f
 
-# Project Started on 2024/11/13 #
-# This Version was Last Edited on 2025/2/26 #
+# Project Started on 2024-11-13 #
+# This Version was Last Edited on 2025-02-26 #
 
 Issues Report on Github or https://discord.gg/YBQUd8X8PK
 QQ: 3607178523
@@ -455,6 +455,25 @@ function UniversalModules.AntiVoid(Enabled)
     end
 end
 
+--|| Anti PlatformStand ||--
+
+function UniversalModules.AntiPlatformStand(Enabled)
+    if Enabled then
+        LockConnections.PS = (LockConnections.PS and LockConnections.PS:Disconnect()) or Stepped:Connect(function()
+            local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+            local Humanoid = Character:WaitForChild("Humanoid")
+            if Humanoid and not UniversalModules.Flying then
+                Humanoid.PlatformStand = false
+            end
+        end)
+    else
+        if LockConnections.PS then
+            LockConnections.PS:Disconnect()
+            LockConnections.PS = nil
+        end
+    end
+end
+
 --|| Fly Function ||--
 
 FlyControl = (QEFly and {W = 0, S = 0, A = 0, D = 0, Q = 0, E = 0}) or {W = 0, S = 0, A = 0, D = 0, LeltShift = 0, Space = 0}
@@ -550,6 +569,7 @@ function UniversalModules.Fly(Enabled)
                 Character:FindFirstChild("Humanoid").PlatformStand = true
             elseif SitFly then
                 Character:FindFirstChild("Humanoid").Sit = true
+                LetMeSit = true
             end
             if FlyControl.W == 1 then
                 MoveDirection = MoveDirection + Camera.CFrame.LookVector
@@ -611,8 +631,9 @@ function UniversalModules.Fly(Enabled)
             local Humanoid = Character:FindFirstChild("Humanoid")
             if Humanoid then
                 Humanoid.PlatformStand = false
-                if not Humanoid.SeatPart then
-                    Humanoid.Sit = false
+                if LetMeSit then
+                    Humanoid.Sit = Humanoid.Sit or true
+                    LetMeSit = SitFly
                 end
             end
             if RootPart then
