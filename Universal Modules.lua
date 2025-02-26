@@ -9,11 +9,12 @@ $$ |\$  /$$ |$$ |      $$   ____|$$   ____|$$   ____|
 $$ | \_/ $$ |$$ |      \$$$$$$$\ \$$$$$$$\ \$$$$$$$\ 
 \__|     \__|\__|       \_______| \_______| \_______| 
 
-Universal Modules | MaiFengYXD
-Alpha Edidtion 1  | CC0-1.0 license
+Creator | MaiFengYXD
+License | CC0-1.0
+Version | 0.0.5f
 
+# Project Started on 2024/11/13 #
 # This Version was Last Edited on 2025/2/26 #
-# You are Free to Fully Operate the Source Code #
 
 Issues Report on Github or https://discord.gg/YBQUd8X8PK
 QQ: 3607178523
