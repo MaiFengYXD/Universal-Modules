@@ -504,18 +504,18 @@ if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
 end
 ]]
 Mouse.KeyDown:Connect(function(Key)
-    local Key = Key:lower()
-    if Key == "w" then
+    local Keyl = Key:lower()
+    if Keyl == "w" then
         FlyControl.W = 1
-    elseif Key == "s" then
+    elseif Keyl == "s" then
         FlyControl.S = 1
-    elseif Key == "a" then
+    elseif Keyl == "a" then
         FlyControl.A = 1
-    elseif Key == "d" then
+    elseif Keyl == "d" then
         FlyControl.D = 1
-    elseif QEFly and Key == "q" then
+    elseif QEFly and Keyl == "q" then
         FlyControl.Q = 1
-    elseif QEFly and Key == "e" then
+    elseif QEFly and Keyl == "e" then
         FlyControl.E = 1
     end
     if UseFlyGyro then
@@ -526,17 +526,17 @@ Mouse.KeyDown:Connect(function(Key)
 end)
 Mouse.KeyUp:Connect(function(Key)
     local Key = Key:lower()
-    if Key == "w" then
+    if Keyl == "w" then
         FlyControl.W = 0
-    elseif Key == "s" then
+    elseif Keyl == "s" then
         FlyControl.S = 0
-    elseif Key == "a" then
+    elseif Keyl == "a" then
         FlyControl.A = 0
-    elseif Key == "d" then
+    elseif Keyl == "d" then
         FlyControl.D = 0
-    elseif QEFly and Key == "q" then
+    elseif QEFly and Keyl == "q" then
         FlyControl.Q = 0
-    elseif QEFly and Key == "e" then
+    elseif QEFly and Keyl == "e" then
         FlyControl.E = 0
     end
 end)
