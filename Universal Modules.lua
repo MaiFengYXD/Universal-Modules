@@ -470,35 +470,35 @@ function IsKeyUpSafeCall(Key)
 end
 
 if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-    IsKeyDownSafeCall("W")
+    IsKeyDownSafeCall(W)
 end
 if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-    IsKeyDownSafeCall("S")
+    IsKeyDownSafeCall(S)
 end
 if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-    IsKeyDownSafeCall("A")
+    IsKeyDownSafeCall(A)
 end
 if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-    IsKeyDownSafeCall("D")
+    IsKeyDownSafeCall(D)
 end
 if UserInputService:IsKeyDown(Enum.KeyCode.Q) then
     if QEFly then
-        IsKeyDownSafeCall("Q")
+        IsKeyDownSafeCall(Q)
     end
 end
 if UserInputService:IsKeyDown(Enum.KeyCode.E) then
     if QEFly then
-        IsKeyDownSafeCall("E")
+        IsKeyDownSafeCall(E)
     end
 end
 if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
     if not QEFly then
-        IsKeyDownSafeCall("LeftShift")
+        IsKeyDownSafeCall(LeltShift)
     end
 end
 if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
     if not QEFly then
-        IsKeyDownSafeCall("Space")
+        IsKeyDownSafeCall(Space)
     end
 end
 
@@ -511,7 +511,7 @@ function UniversalModules.Fly(Enabled)
         local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
         UniversalModules.Flying = true
         local RootPart = Character:WaitForChild("HumanoidRootPart")
-        FlyControl = (QEFly and {"W" = 0, "S" = 0, "A" = 0, "D" = 0, "Q" = 0, "E" = 0}) or {"W" = 0, "S" = 0, "A" = 0, "D" = 0, "LeftShift" = 0, "Space" = 0}
+        FlyControl = (QEFly and {W = 0, S = 0, A = 0, D = 0, Q = 0, E = 0}) or {W = 0, S = 0, A = 0, D = 0, LeltShift = 0, Space = 0}
         local FlyKeyDown = nil
         local FlyKeyUp = nil
         local FlyVelocity = Instance.new("BodyVelocity")
@@ -532,22 +532,22 @@ function UniversalModules.Fly(Enabled)
             elseif SitFly then
                 Character:FindFirstChild("Humanoid").Sit = true
             end
-            if FlyControl["W"] == 1 then
+            if FlyControl[W] == 1 then
                 MoveDirection = MoveDirection + Camera.CFrame.LookVector
             end
-            if FlyControl["S"] == 1 then
+            if FlyControl[S] == 1 then
                 MoveDirection = MoveDirection - Camera.CFrame.LookVector
             end
-            if FlyControl["A"] == 1 then
+            if FlyControl[A] == 1 then
                 MoveDirection = MoveDirection - Camera.CFrame.RightVector
             end
-            if FlyControl["D"] == 1 then
+            if FlyControl[D] == 1 then
                 MoveDirection = MoveDirection + Camera.CFrame.RightVector
             end
-            if FlyControl["Q"] == 1 or FlyControl["LeftShift"] == 1 then
+            if FlyControl[Q] == 1 or FlyControl[LeltShift] == 1 then
                 MoveDirection = MoveDirection - Vector3.new(0, VerticalFlySpeedMultipiler, 0)
             end
-            if FlyControl["E"] == 1 or FlyControl["Space"] == 1 then
+            if FlyControl[E] == 1 or FlyControl[Space] == 1 then
                 MoveDirection = MoveDirection + Vector3.new(0, VerticalFlySpeedMultipiler, 0)
             end
             FlyVelocity.Velocity = MoveDirection * FlySpeed
@@ -558,17 +558,17 @@ function UniversalModules.Fly(Enabled)
         FlyKeyDown = Mouse.KeyDown:Connect(function(Key)
             local Key = Key:lower()
             if Key == "w" then
-                IsKeyDownSafeCall("W")
+                IsKeyDownSafeCall(W)
             elseif Key == "s" then
-                IsKeyDownSafeCall("S")
+                IsKeyDownSafeCall(S)
             elseif Key == "a" then
-                IsKeyDownSafeCall("A")
+                IsKeyDownSafeCall(A)
             elseif Key == "d" then
-                IsKeyDownSafeCall("D")
+                IsKeyDownSafeCall(D)
             elseif QEFly and Key == "q" then
-                IsKeyDownSafeCall("Q")
+                IsKeyDownSafeCall(Q)
             elseif QEFly and Key == "e" then
-                IsKeyDownSafeCall("E")
+                IsKeyDownSafeCall(E)
             end
             if UseFlyGyro then
                 pcall(function()
@@ -579,24 +579,24 @@ function UniversalModules.Fly(Enabled)
         FlyKeyUp = Mouse.KeyUp:Connect(function(Key)
             local Key = Key:lower()
             if Key == "w" then
-                IsKeyUpSafeCall("W")
+                IsKeyUpSafeCall(W)
             elseif Key == "s" then
-                IsKeyUpSafeCall("S")
+                IsKeyUpSafeCall(S)
             elseif Key == "a" then
-                IsKeyUpSafeCall("A")
+                IsKeyUpSafeCall(A)
             elseif Key == "d" then
-                IsKeyUpSafeCall("D")
+                IsKeyUpSafeCall(D)
             elseif QEFly and Key == "q" then
-                IsKeyUpSafeCall("Q")
+                IsKeyUpSafeCall(Q)
             elseif QEFly and Key == "e" then
-                IsKeyUpSafeCall("E")
+                IsKeyUpSafeCall(E)
             end
         end)
         NonQEFlyKeyDown = not QEFly and UserInputService.InputBegan:Connect(function(Key)
             if Key.KeyCode == Enum.KeyCode.LeftShift then
-                IsKeyDownSafeCall("LeftShift")
+                IsKeyDownSafeCall(LeltShift)
             elseif Key.KeyCode == Enum.KeyCode.Space then
-                IsKeyDownSafeCall("Space")
+                IsKeyDownSafeCall(Space)
             end
             if UseFlyGyro then
                 pcall(function()
@@ -606,9 +606,9 @@ function UniversalModules.Fly(Enabled)
         end)
         NonQEFlyKeyUp = not QEFly and UserInputService.InputEnded:Connect(function(Key)
             if Key.KeyCode == Enum.KeyCode.LeftShift then
-                IsKeyUpSafeCall("LeftShift")
+                IsKeyUpSafeCall(LeltShift)
             elseif Key.KeyCode == Enum.KeyCode.Space then
-                IsKeyUpSafeCall("Space")
+                IsKeyUpSafeCall(Space)
             end
         end)
     else
