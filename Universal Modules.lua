@@ -616,4 +616,11 @@ function UniversalModules.Fly(Enabled)
     end
 end
 
+LockConnections.SpeakerDied = Speaker.CharacterAdded:Connect(function(Character)
+    if UniversalModules.Flying then
+        FlyToggle:SetValue(false)
+        FlyKeyPicker:SetState(false)
+    end
+end)
+
 return UniversalModules
