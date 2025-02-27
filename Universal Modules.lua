@@ -765,7 +765,7 @@ end
 function UniversalModules.CameraNoclip(Enabled)
     if Enabled then
         CurrentCameraOcclusionMode = Speaker.DevCameraOcclusionMode
-        Speaker.CameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
+        Speaker.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
         LockConnections.CNC = (LockConnections.CNC and LockConnections.CNC:Disconnect()) or Speaker:GetPropertyChangedSignal("DevCameraOcclusionMode"):Connect(function()
             Speaker.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
         end)
@@ -796,13 +796,13 @@ function UniversalModules.AntiFollowCameraMode(Enabled)
     if Enabled then
         CurrentCameraModePC = Speaker.DevComputerCameraMode
         CurrentCameraModeMobile = Speaker.DevTouchCameraMode
-        Speaker.DevComputerCameraMode = Enum.Classic
-        Speaker.DevTouchCameraMode = Enum.Classic
+        Speaker.DevComputerCameraMode = Enum.DevComputerCameraMovementMode.Classic
+        Speaker.DevTouchCameraMode = Enum.DevTouchCameraMovementMode.Classic
         LockConnections.AFCM = (LockConnections.AFCM and LockConnections.AFCM:Disconnect()) or Speaker:GetPropertyChangedSignal("DevComputerCameraMode"):Connect(function()
-            Speaker.DevComputerCameraMode = Enum.Classic
+            Speaker.DevComputerCameraMode = Enum.DevComputerCameraMovementMode.Classic
         end)
         LockConnections.AFCMM = (LockConnections.AFCMM and LockConnections.AFCMM:Disconnect()) or Speaker:GetPropertyChangedSignal("DevTouchCameraMode"):Connect(function()
-            Speaker.DevTouchCameraMode = Enum.Classic
+            Speaker.DevTouchCameraMode = Enum.DevTouchCameraMovementMode.Classic
         end)
     else
         LockConnections.AFCM = LockConnections.AFCM and LockConnections.AFCM:Disconnect()
