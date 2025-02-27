@@ -34,6 +34,8 @@ Players = Cloneref(game:GetService("Players"))
 RunService = Cloneref(game:GetService("RunService"))
 UserInputService = Cloneref(game:GetService("UserInputService"))
 Lighting = Cloneref(game:GetService("Lighting"))
+Heartbeat = RunService.Heartbeat
+Stepped = RunService.Stepped
 
 --// Movement and Camera Settings \\--
 Speaker = Players.LocalPlayer
