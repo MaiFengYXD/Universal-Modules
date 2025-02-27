@@ -1273,12 +1273,6 @@ function UniversalModules.ShadowSoftnessValue(Number)
     end
 end
 
---|| Technology Function ||--
-
-function UniversalModules.Technology(Technology)
-    Lighting.Technology = Technology
-end
-
 --|| Geographic Latitude Function ||--
 
 function UniversalModules.GeographicLatitude(Enabled)
