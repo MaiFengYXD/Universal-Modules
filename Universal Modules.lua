@@ -683,7 +683,7 @@ function UniversalModules.FOV(Enabled)
     if Enabled then
         CurrentFOV = Camera.FieldOfView
         Camera.FieldOfView = ModedFOV
-        LockConnections.FOV = (LockConnections.FOV and LockConnections.FOV:Disconnect()) Camera:GetPropertyChangedSignal("FieldOfView"):Connect(function()
+        LockConnections.FOV = (LockConnections.FOV and LockConnections.FOV:Disconnect()) or Camera:GetPropertyChangedSignal("FieldOfView"):Connect(function()
             Camera.FieldOfView = ModedFOV
         end)
     else
