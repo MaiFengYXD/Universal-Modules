@@ -861,9 +861,7 @@ function UniversalModules.FullBright(Enabled)
             ClockTimeToggle:SetValue(false)
             OutdoorAmbientToggle:SetValue(false)
         end
-        repeat
-            wait(0.016)
-        until Lighting.Ambient == CurrentAmbient or Lighting.Brightness == CurrentBrightness or Lighting.ClockTime == CurrentClockTime or Lighting.OutdoorAmbient == CurrentOutdoorAmbient
+        wait(.1)
         CurrentAmbient = Lighting.Ambient
         CurrentBrightness = Lighting.Brightness
         CurrentClockTime = Lighting.ClockTime
