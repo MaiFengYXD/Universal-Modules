@@ -1277,9 +1277,6 @@ end
 
 function UniversalModules.Technology(Technology)
     Lighting.Technology = Technology
-    LockConnections.T = (LockConnections.T and LockConnections.T:Disconnect()) or Lighting:GetPropertyChangedSignal("Technology"):Connect(function()
-        Lighting.Technology = Technology
-    end)
 end
 
 --|| Geographic Latitude Function ||--
