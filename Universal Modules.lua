@@ -861,7 +861,9 @@ function UniversalModules.FullBright(Enabled)
             ClockTimeToggle:SetValue(false)
             OutdoorAmbientToggle:SetValue(false)
         end
-        Heartbeat:Wait()
+        repeat
+            wait(0.016)
+        until not AmbientChange and not BrightnessChange and not ClockTimeChange and not OutdoorAmbientChange
         CurrentAmbient = Lighting.Ambient
         CurrentBrightness = Lighting.Brightness
         CurrentClockTime = Lighting.ClockTime
@@ -1048,8 +1050,8 @@ end
 --|| Ambient Function ||--
 
 function UniversalModules.Ambient(Enabled)
-    AmbientChange = Enabled
     if Enabled then
+        AmbientChange = true
         repeat
             wait(0.016)
         until not FullBrightChange
@@ -1063,6 +1065,7 @@ function UniversalModules.Ambient(Enabled)
     else
         LockConnections.A = LockConnections.A and LockConnections.A:Disconnect()
         Lighting.Ambient = CurrentAmbient
+        AmbientChange = false
     end
 end
 
@@ -1076,8 +1079,8 @@ end
 --|| Brightness Function ||--
 
 function UniversalModules.Brightness(Enabled)
-    BrightnessChange = Enabled
     if Enabled then
+        BrightnessChange = true
         repeat
             wait(0.016)
         until not FullBrightChange
@@ -1090,6 +1093,7 @@ function UniversalModules.Brightness(Enabled)
     else
         LockConnections.B = LockConnections.B and LockConnections.B:Disconnect()
         Lighting.Brightness = CurrentBrightness
+        BrightnessChange = false
     end
 end
 
@@ -1103,8 +1107,8 @@ end
 --|| ClockTime Function ||--
 
 function UniversalModules.ClockTime(Enabled)
-    ClockTimeChange = Enabled
     if Enabled then
+        ClockTimeChange = true
         repeat
             wait(0.016)
         until not FullBrightChange
@@ -1117,6 +1121,7 @@ function UniversalModules.ClockTime(Enabled)
     else
         LockConnections.CT = LockConnections.CT and LockConnections.CT:Disconnect()
         Lighting.ClockTime = CurrentClockTime
+        ClockTimeChange = false
     end
 end
 
@@ -1130,8 +1135,8 @@ end
 --|| Outdoor Ambient Function ||--
 
 function UniversalModules.OutdoorAmbient(Enabled)
-    OutdoorAmbientChange = Enabled
     if Enabled then
+        OutdoorAmbientChange = true
         repeat
             wait(0.016)
         until not FullBrightChange
@@ -1144,6 +1149,7 @@ function UniversalModules.OutdoorAmbient(Enabled)
     else
         LockConnections.OA = LockConnections.OA and LockConnections.OA:Disconnect()
         Lighting.OutdoorAmbient = CurrentOutdoorAmbient
+        OutdoorAmbientChange = false
     end
 end
 
