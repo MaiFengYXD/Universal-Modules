@@ -11,10 +11,10 @@ $$ | \_/ $$ |$$ |      \$$$$$$$\ \$$$$$$$\ \$$$$$$$\
 
 Creator | MaiFengYXD
 License | CC0-1.0
-Version | 0.0.5f
+Version | 0.0.6 (Stable)
 
 # Project Started on 2024-11-13 #
-# This Version was Last Edited on 2025-02-26 #
+# This Version was Last Edited on 2025-02-27 #
 
 Issues Report on Github or https://discord.gg/YBQUd8X8PK
 QQ: 3607178523
@@ -62,6 +62,7 @@ QEFly = true
 UseFlyGyro = true
 FlySpeed = 30
 VerticalFlySpeedMultipiler = 1
+StopFlyOnDied = true
 
 --|| AntiAFK Function ||--
 
@@ -389,7 +390,7 @@ end
 
 function UniversalModules.VehicleNoclip(Enabled)
     if Enabled then
-        VNoclipNotified2 = false
+        VNoclipNotified = false
         VNoclipParts = {}
         LockConnections.VNC = (LockConnections.VNC and LockConnections.VNC:Disconnect()) or Stepped:Connect(function(Delta)
             local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
@@ -418,10 +419,6 @@ function UniversalModules.VehicleNoclip(Enabled)
             else
                 VNoclipNotified = false
                 VNocliping = false
-                if not VNoclipNotified2 then
-                    VNoclipNotified2 = true
-                    Library:Notify(GlobalText.VehicleNoclipNotify2, 5)
-                end
             end
         end)
     else
@@ -455,54 +452,10 @@ function UniversalModules.AntiVoid(Enabled)
     end
 end
 
---|| Anti PlatformStand ||--
-
-function UniversalModules.AntiPlatformStand(Enabled)
-    if Enabled then
-        LockConnections.PS = (LockConnections.PS and LockConnections.PS:Disconnect()) or Stepped:Connect(function()
-            local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
-            local Humanoid = Character:WaitForChild("Humanoid")
-            if Humanoid and not UniversalModules.Flying then
-                Humanoid.PlatformStand = false
-            end
-        end)
-    else
-        if LockConnections.PS then
-            LockConnections.PS:Disconnect()
-            LockConnections.PS = nil
-        end
-    end
-end
-
 --|| Fly Function ||--
 
-FlyControl = (QEFly and {W = 0, S = 0, A = 0, D = 0, Q = 0, E = 0}) or {W = 0, S = 0, A = 0, D = 0, LeltShift = 0, Space = 0}
---[[
-if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-    FlyControl.W = 1
-end
-if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-    FlyControl.S = 1
-end
-if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-    FlyControl.A = 1
-end
-if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-    FlyControl.D = 1
-end
-if UserInputService:IsKeyDown(Enum.KeyCode.Q) then
-    FlyControl.Q = QEFly and 1
-end
-if UserInputService:IsKeyDown(Enum.KeyCode.E) then
-    FlyControl.E = QEFly and 1
-end
-if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-    FlyControl.LeltShift = not QEFly and 1
-end
-if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-    FlyControl.Space = not QEFly and 1
-end
-]]
+FlyControl = {W = 0, S = 0, A = 0, D = 0, Q = 0, E = 0, LeltShift = 0, Space = 0}
+
 Mouse.KeyDown:Connect(function(Key)
     local Keyl = Key:lower()
     if Keyl == "w" then
@@ -518,14 +471,15 @@ Mouse.KeyDown:Connect(function(Key)
     elseif QEFly and Keyl == "e" then
         FlyControl.E = 1
     end
-    if UseFlyGyro then
+    if UseFlyGyro and UniversalModules.Flying then
         pcall(function()
             Camera.CameraType = Enum.CameraType.Track
         end)
     end
 end)
+
 Mouse.KeyUp:Connect(function(Key)
-    local Key = Key:lower()
+    local Keyl = Key:lower()
     if Keyl == "w" then
         FlyControl.W = 0
     elseif Keyl == "s" then
@@ -541,17 +495,36 @@ Mouse.KeyUp:Connect(function(Key)
     end
 end)
 
+UserInputService.InputBegan:Connect(function(Key)
+    if Key.KeyCode == Enum.KeyCode.LeftShift then
+        FlyControl.LeltShift = 1
+    elseif Key.KeyCode == Enum.KeyCode.Space then
+        FlyControl.Space = 1
+    end
+    if UseFlyGyro and UniversalModules.Flying then
+        pcall(function()
+            Camera.CameraType = Enum.CameraType.Track
+        end)
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(Key)
+    if Key.KeyCode == Enum.KeyCode.LeftShift then
+        FlyControl.LeltShift = 0
+    elseif Key.KeyCode == Enum.KeyCode.Space then
+        FlyControl.Space = 0
+    end
+end)
+
 function UniversalModules.Fly(Enabled)
+    UniversalModules.Flying = Enabled
     if Enabled then
         if Weaponry then
             Library:Notify(GlobalText.WeaponryCheck, 5)
             return warn(GlobalText.WeaponryCheck)
         end
-        UniversalModules.Flying = true
         local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
         local RootPart = Character:WaitForChild("HumanoidRootPart")
-        local FlyKeyDown = nil
-        local FlyKeyUp = nil
         FlyVelocity = Instance.new("BodyVelocity")
         FlyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
         FlyVelocity.Velocity = Vector3.new(0, 0, 0)
@@ -565,10 +538,17 @@ function UniversalModules.Fly(Enabled)
         end
         LockConnections.Fly = (LockConnections.Fly and LockConnections.Fly:Disconnect()) or Stepped:Connect(function()
             local MoveDirection = Vector3.new(0, 0, 0)
+            local Humanoid = Character:WaitForChild("Humanoid")
             if not VFly and not SitFly then
-                Character:FindFirstChild("Humanoid").PlatformStand = true
-            elseif SitFly then
-                Character:FindFirstChild("Humanoid").Sit = true
+                Humanoid.PlatformStand = true
+            elseif VFly and not SitFly then
+                Humanoid.PlatformStand = false
+                if not Humanoid.SeatPart then
+                    Humanoid.Sit = false
+                end
+            elseif not VFly and SitFly then
+                Humanoid.PlatformStand = false
+                Humanoid.Sit = true
             end
             if FlyControl.W == 1 then
                 MoveDirection = MoveDirection + Camera.CFrame.LookVector
@@ -582,10 +562,10 @@ function UniversalModules.Fly(Enabled)
             if FlyControl.D == 1 then
                 MoveDirection = MoveDirection + Camera.CFrame.RightVector
             end
-            if FlyControl.Q == 1 or FlyControl.LeltShift == 1 then
+            if QEFly and FlyControl.Q == 1 or not QEFly and FlyControl.LeltShift == 1 then
                 MoveDirection = MoveDirection - Vector3.new(0, VerticalFlySpeedMultipiler, 0)
             end
-            if FlyControl.E == 1 or FlyControl.Space == 1 then
+            if QEFly and FlyControl.E == 1 or not QEFly and FlyControl.Space == 1 then
                 MoveDirection = MoveDirection + Vector3.new(0, VerticalFlySpeedMultipiler, 0)
             end
             FlyVelocity.Velocity = MoveDirection * FlySpeed
@@ -593,27 +573,7 @@ function UniversalModules.Fly(Enabled)
                 FlyGyro.CFrame = Camera.CFrame
             end
         end)
-        NonQEFlyKeyDown = not QEFly and UserInputService.InputBegan:Connect(function(Key)
-            if Key.KeyCode == Enum.KeyCode.LeftShift then
-                FlyControl.LeltShift = 1
-            elseif Key.KeyCode == Enum.KeyCode.Space then
-                FlyControl.Space = 1
-            end
-            if UseFlyGyro then
-                pcall(function()
-                    Camera.CameraType = Enum.CameraType.Track
-                end)
-            end
-        end)
-        NonQEFlyKeyUp = not QEFly and UserInputService.InputEnded:Connect(function(Key)
-            if Key.KeyCode == Enum.KeyCode.LeftShift then
-                FlyControl.LeltShift = 0
-            elseif Key.KeyCode == Enum.KeyCode.Space then
-                FlyControl.Space = 0
-            end
-        end)
     else
-        UniversalModules.Flying = false
         if LockConnections.Fly then
             LockConnections.Fly:Disconnect()
             LockConnections.Fly = nil
@@ -628,7 +588,6 @@ function UniversalModules.Fly(Enabled)
         if Character then
             FlyGyro = FlyGyro and FlyGyro:Destroy()
             FlyVelocity = FlyVelocity and FlyVelocity:Destroy()
-            local RootPart = Character:FindFirstChild("HumanoidRootPart")
             local Humanoid = Character:FindFirstChild("Humanoid")
             if Humanoid then
                 Humanoid.PlatformStand = false
@@ -642,8 +601,16 @@ end
 
 --|| Speaker Died Connection ||--
 
-LockConnections.SpeakerDied = Speaker.CharacterRemoving:Connect(function(Character)
-    FlyToggle:SetValue(false)
+LockConnections.SpeakerDied = Speaker.CharacterRemoving:Connect(function()
+    if StopFlyOnDied then
+        FlyToggle:SetValue(false)
+    end
+    local Character = Speaker.CharacterAdded:Wait()
+    if Character:WaitForChild("HumanoidRootPart") and not StopFlyOnDied and UniversalModules.Flying then
+        FlyToggle:SetValue(false)
+        Heartbeat:Wait()
+        FlyToggle:SetValue(true)
+    end
 end)
 
 --|| Exit Function ||--
@@ -673,5 +640,4 @@ end
 
 --|| Return Table ||--
 
-print("Time: 1:37")
 return UniversalModules
