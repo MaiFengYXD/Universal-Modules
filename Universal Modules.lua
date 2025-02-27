@@ -1275,25 +1275,11 @@ end
 
 --|| Technology Function ||--
 
-function UniversalModules.Technology(Enabled)
-    TechnologyChange = Enabled
-    if Enabled then
-        CurrentTechnology = Lighting.Technology
-        Lighting.Technology = ModedTechnology
-        LockConnections.T = (LockConnections.T and LockConnections.T:Disconnect()) or Lighting:GetPropertyChangedSignal("Technology"):Connect(function()
-            Lighting.Technology = ModedTechnology
-        end)
-    else
-        LockConnections.T = LockConnections.T and LockConnections.T:Disconnect()
-        Lighting.Technology = CurrentTechnology
-    end
-end
-
-function UniversalModules.TechnologyValue(Technology)
-    ModedTechnology = Technology
-    if TechnologyChange then
-        Lighting.Technology = ModedTechnology
-    end
+function UniversalModules.Technology(Technology)
+    Lighting.Technology = Technology
+    LockConnections.T = (LockConnections.T and LockConnections.T:Disconnect()) or Lighting:GetPropertyChangedSignal("Technology"):Connect(function()
+        Lighting.Technology = Technology
+    end)
 end
 
 --|| Geographic Latitude Function ||--
