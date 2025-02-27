@@ -856,11 +856,12 @@ function UniversalModules.FullBright(Enabled)
     FullBrightChange = Enabled
     if Enabled then
         if AmbientChange or BrightnessChange or ClockTimeChange or OutdoorAmbientChange then
-            UniversalModules.Ambient(false)
-            UniversalModules.Brightness(false)
-            UniversalModules.ClockTime(false)
-            UniversalModules.OutdoorAmbient(false)
+            AmbientColorToggle:SetValue(false)
+            BrightnessToggle:SetValue(false)
+            ClockTimeToggle:SetValue(false)
+            OutdoorAmbientToggle:SetValue(false)
         end
+        Heartbeat:Wait()
         CurrentAmbient = Lighting.Ambient
         CurrentBrightness = Lighting.Brightness
         CurrentClockTime = Lighting.ClockTime
@@ -1052,6 +1053,7 @@ function UniversalModules.Ambient(Enabled)
         repeat
             wait(0.016)
         until not FullBrightChange
+        Heartbeat:Wait()
         CurrentAmbient = Lighting.Ambient
         Lighting.Ambient = ModedAmbient
         LockConnections.A = (LockConnections.A and LockConnections.A:Disconnect()) or Lighting:GetPropertyChangedSignal("Ambient"):Connect(function()
@@ -1079,6 +1081,7 @@ function UniversalModules.Brightness(Enabled)
         repeat
             wait(0.016)
         until not FullBrightChange
+        Heartbeat:Wait()
         CurrentBrightness = Lighting.Brightness
         Lighting.Brightness = ModedBrightness
         LockConnections.B = (LockConnections.B and LockConnections.B:Disconnect()) or Lighting:GetPropertyChangedSignal("Brightness"):Connect(function()
@@ -1105,6 +1108,7 @@ function UniversalModules.ClockTime(Enabled)
         repeat
             wait(0.016)
         until not FullBrightChange
+        Heartbeat:Wait()
         CurrentClockTime = Lighting.ClockTime
         Lighting.ClockTime = ModedClockTime
         LockConnections.CT = (LockConnections.CT and LockConnections.CT:Disconnect()) or Lighting:GetPropertyChangedSignal("ClockTime"):Connect(function()
@@ -1131,6 +1135,7 @@ function UniversalModules.OutdoorAmbient(Enabled)
         repeat
             wait(0.016)
         until not FullBrightChange
+        Heartbeat:Wait()
         CurrentOutdoorAmbient = Lighting.OutdoorAmbient
         Lighting.OutdoorAmbient = ModedOutdoorAmbient
         LockConnections.OA = (LockConnections.OA and LockConnections.OA:Disconnect()) or Lighting:GetPropertyChangedSignal("OutdoorAmbient"):Connect(function()
