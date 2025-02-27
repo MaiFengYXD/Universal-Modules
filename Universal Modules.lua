@@ -32,11 +32,32 @@ Workspace = Cloneref(game:GetService("Workspace"))
 Players = Cloneref(game:GetService("Players"))
 RunService = Cloneref(game:GetService("RunService"))
 UserInputService = Cloneref(game:GetService("UserInputService"))
+Lighting = Cloneref(game:GetService("Lighting"))
 Heartbeat = RunService.Heartbeat
 RenderStepped = RunService.RenderStepped
 Stepped = RunService.Stepped
 Speaker = Players.LocalPlayer
 Camera = Workspace.CurrentCamera
+CurrentMovement = Speaker.DevComputerCameraMovementMode
+CurrentFOV = Camera.FieldOfView
+CurrentMaxZoom = Speaker.CameraMaxZoomDistance
+CurrentMinZoom = Speaker.CameraMinZoomDistance
+CurrentCameraMode = Speaker.CameraMode
+CurrentCameraOcclusionMode = Speaker.DevCameraOcclusionMode
+CurrentShiftLock = Speaker.DevEnableMouseLock
+CurrentCameraModePC = Speaker.DevComputerCameraMode
+CurrentCameraModeMobile = Speaker.DevTouchCameraMode
+CurrentAmbient = Lighting.Ambient
+CurrentBrightness = Lighting.Brightness
+CurrentClockTime = Lighting.ClockTime
+CurrentOutdoorAmbient = Lighting.OutdoorAmbient
+CurrentColorShiftBottom = Lighting.ColorShift_Bottom
+CurrentColorShiftTop = Lighting.ColorShift_Top
+CurrentDiffuseScale = Lighting.EnvironmentDiffuseScale
+CurrentSpecularScale = Lighting.EnvironmentSpecularScale
+CurrentShadowSoftness = Lighting.ShadowSoftness
+CurrentTechnology = Lighting.Technology
+CurrentGeoLatitude = Lighting.GeographicLatitude
 AFKMouseClick1 = false
 AFKMouseClick2 = false
 AFKMousemoveabs = false
@@ -360,6 +381,60 @@ function UniversalModules.GravityValue(Number)
     end
 end
 
+--|| Hip Height Function ||--
+
+function UniversalModules.HipHeight(Enabled)
+    HipHeightChange = Enabled
+    if Enabled then
+        local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+        local Humanoid = Character:WaitForChild("Humanoid")
+        CurrentHipHeight = Humanoid.HipHeight
+        Humanoid.HipHeight = ModedHipHeight
+        LockConnections.HH = Humanoid:GetPropertyChangedSignal("HipHeight"):Connect(function()
+            CurrentHipHeight = Humanoid.HipHeight
+            Humanoid.HipHeight = ModedHipHeight
+        end)
+        LockConnections.HHCA = Speaker.CharacterAdded:Connect(function(Character)
+            local Humanoid = Character:WaitForChild("Humanoid")
+            CurrentHipHeight = Humanoid.HipHeight
+            Humanoid.HipHeight = ModedHipHeight
+            LockConnections.HH = (LockConnections.HH and LockConnections.HH:Disconnect()) or Humanoid:GetPropertyChangedSignal("HipHeight"):Connect(function()
+                CurrentHipHeight = Humanoid.HipHeight
+                Humanoid.HipHeight = ModedHipHeight
+            end)
+        end)
+    else
+        if LockConnections.HH then
+            LockConnections.HH:Disconnect()
+            LockConnections.HH = nil
+        end
+        if LockConnections.HHCA then
+            LockConnections.HHCA:Disconnect()
+            LockConnections.HHCA = nil
+        end
+        local Character = Speaker.Character
+        if Character then
+            local Humanoid = Character:FindFirstChild("Humanoid")
+            if Humanoid then
+                Humanoid.HipHeight = CurrentHipHeight or 0
+            end
+        end
+    end
+end
+
+function UniversalModules.HipHeightValue(Number)
+    ModedHipHeight = Number
+    if HipHeightChange then
+        local Character = Speaker.Character
+        if Character then
+            local Humanoid = Character:FindFirstChild("Humanoid")
+            if Humanoid then
+                Humanoid.HipHeight = ModedHipHeight
+            end
+        end
+    end
+end
+
 --|| Noclip Function ||--
 
 function UniversalModules.Noclip(Enabled)
@@ -599,6 +674,788 @@ function UniversalModules.Fly(Enabled)
     end
 end
 
+--|| Click to Move Function ||--
+
+function UniversalModules.ClickToMove(Enabled)
+    if Enabled then
+        CurrentMovement = Speaker.DevComputerCameraMovementMode
+        Speaker.DevComputerCameraMovementMode = Enum.DevComputerCameraMovementMode.ClickToMove
+        LockConnections.CTM = (LockConnections.CTM and LockConnections.CTM:Disconnect()) or Speaker:GetPropertyChangedSignal("DevComputerCameraMovementMode"):Connect(function()
+            CurrentMovement = Speaker.DevComputerCameraMovementMode
+            Speaker.DevComputerCameraMovementMode = Enum.DevComputerCameraMovementMode.ClickToMove
+        end)
+    else
+        if LockConnections.CTM then
+            LockConnections.CTM:Disconnect()
+            LockConnections.CTM = nil
+        end
+        Speaker.DevComputerCameraMovementMode = CurrentMovement
+    end
+end
+
+--|| FOV Function ||--
+
+function UniversalModules.FOV(Enabled)
+    if Enabled then
+        CurrentFOV = Camera.FieldOfView
+        Camera.FieldOfView = ModedFOV
+        LockConnections.FOV = (LockConnections.FOV and LockConnections.FOV:Disconnect()) Camera:GetPropertyChangedSignal("FieldOfView"):Connect(function()
+            CurrentFOV = Camera.FieldOfView
+            Camera.FieldOfView = ModedFOV
+        end)
+    else
+        if LockConnections.FOV then
+            LockConnections.FOV:Disconnect()
+            LockConnections.FOV = nil
+        end
+        Camera.FieldOfView = CurrentFOV
+    end
+end
+
+function UniversalModules.FOVValue(Number)
+    ModedFOV = Number
+    if LockConnections.FOV then
+        Camera.FieldOfView = ModedFOV
+    end
+end
+
+--|| Max Zoom Function ||--
+
+function UniversalModules.MaxZoom(Enabled)
+    if Enabled then
+        CurrentMaxZoom = Speaker.CameraMaxZoomDistance
+        Speaker.CameraMaxZoomDistance = ModedMaxZoom
+        LockConnections.MZ = (LockConnections.MZ and LockConnections.MZ:Disconnect()) or Speaker:GetPropertyChangedSignal("CameraMaxZoomDistance"):Connect(function()
+            CurrentMaxZoom = Speaker.CameraMaxZoomDistance
+            Speaker.CameraMaxZoomDistance = ModedMaxZoom
+        end)
+    else
+        if LockConnections.MZ then
+            LockConnections.MZ:Disconnect()
+            LockConnections.MZ = nil
+        end
+        Speaker.CameraMaxZoomDistance = CurrentMaxZoom
+    end
+end
+
+function UniversalModules.MaxZoomValue(Number)
+    ModedMaxZoom = Number
+    if LockConnections.MZ then
+        Speaker.CameraMaxZoomDistance = ModedMaxZoom
+    end
+end
+
+--|| Min Zoom Function ||--
+
+function UniversalModules.MinZoom(Enabled)
+    if Enabled then
+        CurrentMinZoom = Speaker.CameraMinZoomDistance
+        Speaker.CameraMinZoomDistance = ModedMinZoom
+        LockConnections.MiZ = (LockConnections.MiZ and LockConnections.MiZ:Disconnect()) or Speaker:GetPropertyChangedSignal("CameraMinZoomDistance"):Connect(function()
+            CurrentMinZoom = Speaker.CameraMinZoomDistance
+            Speaker.CameraMinZoomDistance = ModedMinZoom
+        end)
+    else
+        if LockConnections.MiZ then
+            LockConnections.MiZ:Disconnect()
+            LockConnections.MiZ = nil
+        end
+        Speaker.CameraMinZoomDistance = CurrentMinZoom
+    end
+end
+
+function UniversalModules.MinZoomValue(Number)
+    ModedMinZoom = Number
+    if LockConnections.MiZ then
+        Speaker.CameraMinZoomDistance = ModedMinZoom
+    end
+end
+
+--|| Unlock Third Person Function ||--
+
+function UniversalModules.UnlockThirdPerson(Enabled)
+    if Enabled then
+        CurrentCameraMode = Speaker.CameraMode
+        Speaker.CameraMode = Enum.CameraMode.Classic
+        LockConnections.UTP = (LockConnections.UTP and LockConnections.UTP:Disconnect()) or Speaker:GetPropertyChangedSignal("CameraMode"):Connect(function()
+            CurrentCameraMode = Speaker.CameraMode
+            Speaker.CameraMode = Enum.CameraMode.Classic
+        end)
+    else
+        if LockConnections.UTP then
+            LockConnections.UTP:Disconnect()
+            LockConnections.UTP = nil
+        end
+        Speaker.CameraMode = CurrentCameraMode
+    end
+end
+
+--|| Camera Noclip Function ||--
+
+function UniversalModules.CameraNoclip(Enabled)
+    if Enabled then
+        CurrentCameraOcclusionMode = Speaker.DevCameraOcclusionMode
+        Speaker.CameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
+        LockConnections.CNC = (LockConnections.CNC and LockConnections.CNC:Disconnect()) or Speaker:GetPropertyChangedSignal("DevCameraOcclusionMode"):Connect(function()
+            CurrentCameraOcclusionMode = Speaker.DevCameraOcclusionMode
+            Speaker.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
+        end)
+    else
+        if LockConnections.CNC then
+            LockConnections.CNC:Disconnect()
+            LockConnections.CNC = nil
+        end
+        Speaker.DevCameraOcclusionMode = CurrentCameraOcclusionMode
+    end
+end
+
+--|| Allow Shift Lock Function ||--
+
+function UniversalModules.AllowShiftLock(Enabled)
+    if Enabled then
+        CurrentShiftLock = Speaker.DevEnableMouseLock
+        Speaker.DevEnableMouseLock = true
+        LockConnections.ASL = (LockConnections.ASL and LockConnections.ASL:Disconnect()) or Speaker:GetPropertyChangedSignal("DevEnableMouseLock"):Connect(function()
+            CurrentShiftLock = Speaker.DevEnableMouseLock
+            Speaker.DevEnableMouseLock = true
+        end)
+    else
+        if LockConnections.ASL then
+            LockConnections.ASL:Disconnect()
+            LockConnections.ASL = nil
+        end
+        Speaker.DevEnableMouseLock = CurrentShiftLock
+    end
+end
+
+--|| Anti Follow Camera Mode Function ||--
+
+function UniversalModules.AntiFollowCameraMode(Enabled)
+    if Enabled then
+        CurrentCameraModePC = Speaker.DevComputerCameraMode
+        CurrentCameraModeMobile = Speaker.DevTouchCameraMode
+        Speaker.DevComputerCameraMode = Enum.Classic
+        Speaker.DevTouchCameraMode = Enum.Classic
+        LockConnections.AFCM = (LockConnections.AFCM and LockConnections.AFCM:Disconnect()) or Speaker:GetPropertyChangedSignal("DevComputerCameraMode"):Connect(function()
+            CurrentCameraModePC = Speaker.DevComputerCameraMode
+            Speaker.DevComputerCameraMode = Enum.Classic
+        end)
+        LockConnections.AFCMM = (LockConnections.AFCMM and LockConnections.AFCMM:Disconnect()) or Speaker:GetPropertyChangedSignal("DevTouchCameraMode"):Connect(function()
+            CurrentCameraModeMobile = Speaker.DevTouchCameraMode
+            Speaker.DevTouchCameraMode = Enum.Classic
+        end)
+    else
+        if LockConnections.AFCM then
+            LockConnections.AFCM:Disconnect()
+            LockConnections.AFCM = nil
+        end
+        if LockConnections.AFCMM then
+            LockConnections.AFCMM:Disconnect()
+            LockConnections.AFCMM = nil
+        end
+        Speaker.DevComputerCameraMode = CurrentCameraModePC
+        Speaker.DevTouchCameraMode = CurrentCameraModeMobile
+    end
+end
+
+--|| Anti Gameplay Paused Function ||--
+
+function UniversalModules.AntiGameplayPaused(Enabled)
+    if Enabled then
+        Speaker.GameplayPaused = false
+        LockConnections.AGP = (LockConnections.AGP and LockConnections.AGP:Disconnect()) or Speaker:GetPropertyChangedSignal("GameplayPaused"):Connect(function()
+            Speaker.GameplayPaused = false
+        end)
+    else
+        if LockConnections.AGP then
+            LockConnections.AGP:Disconnect()
+            LockConnections.AGP = nil
+        end
+        Speaker.GameplayPaused = true
+    end
+end
+
+--|| Camera Offset Function ||--
+
+function UniversalModules.CameraOffset(Enabled)
+    CameraOffseted = Enabled
+    if Enabled then
+        LockConnections.CO = (LockConnections.CO and LockConnections.CO:Disconnect()) or Stepped:Connect(function()
+            if not Camera.CameraSubject == "Humanoid" then
+                return
+            end
+            local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+            local Humanoid = Character:WaitForChild("Humanoid")
+            if Humanoid then
+                CurrentCameraOffset = Humanoid.CameraOffset
+                Humanoid.CameraOffset = ModedCameraOffset
+            end
+        end)
+    else
+        if LockConnections.CO then
+            LockConnections.CO:Disconnect()
+            LockConnections.CO = nil
+        end
+        local Character = Speaker.Character
+        if Character then
+            local Humanoid = Character:FindFirstChild("Humanoid")
+            if Humanoid then
+                Humanoid.CameraOffset = CurrentCameraOffset or Vector3.new(0, 0, 0)
+            end
+        end
+    end
+end
+
+function UniversalModules.CameraOffsetValue(X, Y, Z)
+    ModedCameraOffset = Vector3.new(X, Y, Z)
+    if CameraOffseted then
+        if not Camera.CameraSubject == "Humanoid" then
+            return
+        end
+        local Character = Speaker.Character
+        if Character then
+            local Humanoid = Character:FindFirstChild("Humanoid")
+            if Humanoid then
+                Humanoid.CameraOffset = ModedCameraOffset
+            end
+        end
+    end
+end
+
+--|| Full Bright Function ||--
+
+function UniversalModules.FullBright(Enabled)
+    FullBrightChange = Enabled
+    if Enabled then
+        if AmbientChange or BrightnessChange or ClockTimeChange or OutdoorAmbientChange then
+            UniversalModules.Ambient(false)
+            UniversalModules.Brightness(false)
+            UniversalModules.ClockTime(false)
+            UniversalModules.OutdoorAmbient(false)
+        end
+        CurrentAmbient = Lighting.Ambient
+        CurrentBrightness = Lighting.Brightness
+        CurrentClockTime = Lighting.ClockTime
+        CurrentOutdoorAmbient = Lighting.OutdoorAmbient
+        local function FB()
+            Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+            Lighting.Brightness = 2
+            Lighting.ClockTime = 12
+            Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+        end
+        FB()
+        LockConnections.FB = {
+            A = Lighting:GetPropertyChangedSignal("Ambient"):Connect(FB),
+            B = Lighting:GetPropertyChangedSignal("Brightness"):Connect(FB),
+            C = Lighting:GetPropertyChangedSignal("ClockTime"):Connect(FB),
+            O = Lighting:GetPropertyChangedSignal("OutdoorAmbient"):Connect(FB)
+        }
+    else
+        for i,v in pairs(LockConnections.FB) do
+            v:Disconnect()
+            v = nil
+        end
+        Lighting.Ambient = CurrentAmbient
+        Lighting.Brightness = CurrentBrightness
+        Lighting.ClockTime = CurrentClockTime
+        Lighting.OutdoorAmbient = CurrentOutdoorAmbient
+    end
+end
+
+--|| Full Dark Function (?) ||--
+
+function UniversalModules.FullDark(Enabled)
+    FullDarkChange = Enabled
+    if Enabled then
+        CurrentExposureCompensation = Lighting.ExposureCompensation
+        Lighting.ExposureCompensation = -100
+        LockConnections.FD = (LockConnections.FD and LockConnections.FD:Disconnect()) or Lighting:GetPropertyChangedSignal("ExposureCompensation"):Connect(function()
+            Lighting.ExposureCompensation = -100
+        end)
+    else
+        if LockConnections.FD then
+            LockConnections.FD:Disconnect()
+            LockConnections.FD = nil
+        end
+        Lighting.ExposureCompensation = CurrentExposureCompensation or 0
+    end
+end
+
+--|| Day Function (Super Full Bright) ||--
+
+function UniversalModules.Day(Enabled)
+    DayChange = Enabled
+    if Enabled then
+        local function Day()
+            Sky = Instance.new("Sky")
+            Sky.Name = "SuperFB"
+            Sky.Parent = Lighting
+        end
+        Day()
+        LockConnections.SFB = (LockConnections.SFB and LockConnections.SFB:Disconnect()) or Lighting.DescendantAdded:Connect(function(Instance)
+            if Instance.ClassName == "Sky" and Instance.Name ~= "SuperFB" then
+                Sky:Destroy()
+                Day()
+            end
+        end)
+    else
+        if LockConnections.SFB then
+            LockConnections.SFB:Disconnect()
+            LockConnections.SFB = nil
+        end
+        Sky = Sky and Sky:Destroy()
+    end
+end
+
+--|| No Atmosphere Function ||--
+
+function UniversalModules.NoAtmosphere(Enabled)
+    NoAtmosphereChange = Enabled
+    if Enabled then
+        repeat
+            wait(0.016)
+        until Lighting:FindFirstChildOfClass("Atmosphere")
+        local Atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
+        CurrentAtmosphereDensity = Atmosphere.Density
+        Atmosphere.Density = 0
+        LockConnections.NA = (LockConnections.NA and LockConnections.NA:Disconnect()) or Atmosphere:GetPropertyChangedSignal("Density"):Connect(function()
+            Atmosphere.Density = 0
+        end)
+        LockConnections.NAA = (LockConnections.NAA and LockConnections.NAA:Disconnect()) or Lighting.DescendantAdded:Connect(function(Instance)
+            if Instance.ClassName == "Atmosphere" then
+                Instance.Density = 0
+            end
+        end)
+    else
+        if LockConnections.NA then
+            LockConnections.NA:Disconnect()
+            LockConnections.NA = nil
+        end
+        if LockConnections.NAA then
+            LockConnections.NAA:Disconnect()
+            LockConnections.NAA = nil
+        end
+        local Atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
+        if Atmosphere then
+            Atmosphere.Density = CurrentAtmosphereDensity
+        end
+    end
+end
+
+--|| No Depth Of Field Function ||--
+
+function UniversalModules.NoDepthOfField(Enabled)
+    NoDepthOfFieldChange = Enabled
+    if Enabled then
+        repeat
+            wait(0.016)
+        until Lighting:FindFirstChildOfClass("DepthOfFieldEffect")
+        local DepthOfFieldEffect = Lighting:FindFirstChildOfClass("DepthOfFieldEffect")
+        CurrentDepthOfField = DepthOfFieldEffect.Enabled
+        DepthOfFieldEffect.Enabled = false
+        LockConnections.NDOF = (LockConnections.NDOF and LockConnections.NDOF:Disconnect()) or DepthOfFieldEffect:GetPropertyChangedSignal("Enabled"):Connect(function()
+            DepthOfFieldEffect.Enabled = false
+        end)
+        LockConnections.NDOFA = (LockConnections.NDOFA and LockConnections.NDOFA:Disconnect()) or Lighting.DescendantAdded:Connect(function(Instance)
+            if Instance.ClassName == "DepthOfFieldEffect" then
+                Instance.Enabled = false
+            end
+        end)
+    else
+        if LockConnections.NDOF then
+            LockConnections.NDOF:Disconnect()
+            LockConnections.NDOF = nil
+        end
+        if LockConnections.NDOFA then
+            LockConnections.NDOFA:Disconnect()
+            LockConnections.NDOFA = nil
+        end
+        local DepthOfFieldEffect = Lighting:FindFirstChildOfClass("DepthOfFieldEffect")
+        if DepthOfFieldEffect then
+            DepthOfFieldEffect.Enabled = CurrentDepthOfField
+        end
+    end
+end
+
+--|| No Blur Function ||--
+
+function UniversalModules.NoBlur(Enabled)
+    NoBlurChange = Enabled
+    if Enabled then
+        repeat
+            wait(0.016)
+        until Lighting:FindFirstChildOfClass("BlurEffect")
+        local BlurEffect = Lighting:FindFirstChildOfClass("BlurEffect")
+        CurrentBlur = BlurEffect.Enabled
+        BlurEffect.Enabled = false
+        LockConnections.NB = (LockConnections.NB and LockConnections.NB:Disconnect()) or BlurEffect:GetPropertyChangedSignal("Enabled"):Connect(function()
+            BlurEffect.Enabled = false
+        end)
+        LockConnections.NBA = (LockConnections.NBA and LockConnections.NBA:Disconnect()) or Lighting.DescendantAdded:Connect(function(Instance)
+            if Instance.ClassName == "BlurEffect" then
+                Instance.Enabled = false
+            end
+        end)
+    else
+        if LockConnections.NB then
+            LockConnections.NB:Disconnect()
+            LockConnections.NB = nil
+        end
+        if LockConnections.NBA then
+            LockConnections.NBA:Disconnect()
+            LockConnections.NBA = nil
+        end
+        local BlurEffect = Lighting:FindFirstChildOfClass("BlurEffect")
+        if BlurEffect then
+            BlurEffect.Enabled = CurrentBlur
+        end
+    end
+end
+
+--|| No Bloom Function ||--
+
+function UniversalModules.NoBloom(Enabled)
+    NoBloomChange = Enabled
+    if Enabled then
+        repeat
+            wait(0.016)
+        until Lighting:FindFirstChildOfClass("BloomEffect")
+        local BloomEffect = Lighting:FindFirstChildOfClass("BloomEffect")
+        CurrentBloom = BloomEffect.Enabled
+        BloomEffect.Enabled = false
+        LockConnections.NBL = (LockConnections.NBL and LockConnections.NBL:Disconnect()) or BloomEffect:GetPropertyChangedSignal("Enabled"):Connect(function()
+            BloomEffect.Enabled = false
+        end)
+        LockConnections.NBLA = (LockConnections.NBLA and LockConnections.NBLA:Disconnect()) or Lighting.DescendantAdded:Connect(function(Instance)
+            if Instance.ClassName == "BloomEffect" then
+                Instance.Enabled = false
+            end
+        end)
+    else
+        if LockConnections.NBL then
+            LockConnections.NBL:Disconnect()
+            LockConnections.NBL = nil
+        end
+        if LockConnections.NBLA then
+            LockConnections.NBLA:Disconnect()
+            LockConnections.NBLA = nil
+        end
+        local BloomEffect = Lighting:FindFirstChildOfClass("BloomEffect")
+        if BloomEffect then
+            BloomEffect.Enabled = CurrentBloom
+        end
+    end
+end
+
+--|| Ambient Function ||--
+
+function UniversalModules.Ambient(Enabled)
+    AmbientChange = Enabled
+    if Enabled then
+        repeat
+            wait(0.016)
+        until not FullBrightChange
+        CurrentAmbient = Lighting.Ambient
+        Lighting.Ambient = ModedAmbient
+        LockConnections.A = (LockConnections.A and LockConnections.A:Disconnect()) or Lighting:GetPropertyChangedSignal("Ambient"):Connect(function()
+            CurrentAmbient = Lighting.Ambient
+            Lighting.Ambient = ModedAmbient
+        end)
+    else
+        if LockConnections.A then
+            LockConnections.A:Disconnect()
+            LockConnections.A = nil
+        end
+        Lighting.Ambient = CurrentAmbient
+    end
+end
+
+function UniversalModules.AmbientColor(Color)
+    ModedAmbient = Color
+    if AmbientChange then
+        Lighting.Ambient = ModedAmbient
+    end
+end
+
+--|| Brightness Function ||--
+
+function UniversalModules.Brightness(Enabled)
+    BrightnessChange = Enabled
+    if Enabled then
+        repeat
+            wait(0.016)
+        until not FullBrightChange
+        CurrentBrightness = Lighting.Brightness
+        Lighting.Brightness = ModedBrightness
+        LockConnections.B = (LockConnections.B and LockConnections.B:Disconnect()) or Lighting:GetPropertyChangedSignal("Brightness"):Connect(function()
+            CurrentBrightness = Lighting.Brightness
+            Lighting.Brightness = ModedBrightness
+        end)
+    else
+        if LockConnections.B then
+            LockConnections.B:Disconnect()
+            LockConnections.B = nil
+        end
+        Lighting.Brightness = CurrentBrightness
+    end
+end
+
+function UniversalModules.BrightnessValue(Number)
+    ModedBrightness = Number
+    if BrightnessChange then
+        Lighting.Brightness = ModedBrightness
+    end
+end
+
+--|| ClockTime Function ||--
+
+function UniversalModules.ClockTime(Enabled)
+    ClockTimeChange = Enabled
+    if Enabled then
+        repeat
+            wait(0.016)
+        until not FullBrightChange
+        CurrentClockTime = Lighting.ClockTime
+        Lighting.ClockTime = ModedClockTime
+        LockConnections.CT = (LockConnections.CT and LockConnections.CT:Disconnect()) or Lighting:GetPropertyChangedSignal("ClockTime"):Connect(function()
+            CurrentClockTime = Lighting.ClockTime
+            Lighting.ClockTime = ModedClockTime
+        end)
+    else
+        if LockConnections.CT then
+            LockConnections.CT:Disconnect()
+            LockConnections.CT = nil
+        end
+        Lighting.ClockTime = CurrentClockTime
+    end
+end
+
+function UniversalModules.ClockTimeValue(Number)
+    ModedClockTime = Number
+    if ClockTimeChange then
+        Lighting.ClockTime = ModedClockTime
+    end
+end
+
+--|| Outdoor Ambient Function ||--
+
+function UniversalModules.OutdoorAmbient(Enabled)
+    OutdoorAmbientChange = Enabled
+    if Enabled then
+        repeat
+            wait(0.016)
+        until not FullBrightChange
+        CurrentOutdoorAmbient = Lighting.OutdoorAmbient
+        Lighting.OutdoorAmbient = ModedOutdoorAmbient
+        LockConnections.OA = (LockConnections.OA and LockConnections.OA:Disconnect()) or Lighting:GetPropertyChangedSignal("OutdoorAmbient"):Connect(function()
+            CurrentOutdoorAmbient = Lighting.OutdoorAmbient
+            Lighting.OutdoorAmbient = ModedOutdoorAmbient
+        end)
+    else
+        if LockConnections.OA then
+            LockConnections.OA:Disconnect()
+            LockConnections.OA = nil
+        end
+        Lighting.OutdoorAmbient = CurrentOutdoorAmbient
+    end
+end
+
+function UniversalModules.OutdoorAmbientColor(Color)
+    ModedOutdoorAmbient = Color
+    if OutdoorAmbientChange then
+        Lighting.OutdoorAmbient = ModedOutdoorAmbient
+    end
+end
+
+--|| Color Shift Bottom Function ||--
+
+function UniversalModules.ColorShiftBottom(Enabled)
+    ColorShiftBottomChange = Enabled
+    if Enabled then
+        CurrentColorShiftBottom = Lighting.ColorShift_Bottom
+        Lighting.ColorShift_Bottom = ModedColorShiftBottom
+        LockConnections.CSB = (LockConnections.CSB and LockConnections.CSB:Disconnect()) or Lighting:GetPropertyChangedSignal("ColorShift_Bottom"):Connect(function()
+            CurrentColorShiftBottom = Lighting.ColorShift_Bottom
+            Lighting.ColorShift_Bottom = ModedColorShiftBottom
+        end)
+    else
+        if LockConnections.CSB then
+            LockConnections.CSB:Disconnect()
+            LockConnections.CSB = nil
+        end
+        Lighting.ColorShift_Bottom = CurrentColorShiftBottom
+    end
+end
+
+function UniversalModules.ColorShiftBottomColor(Color)
+    ModedColorShiftBottom = Color
+    if ColorShiftBottomChange then
+        Lighting.ColorShift_Bottom = ModedColorShiftBottom
+    end
+end
+
+--|| Color Shift Top Function ||--
+
+function UniversalModules.ColorShiftTop(Enabled)
+    ColorShiftTopChange = Enabled
+    if Enabled then
+        CurrentColorShiftTop = Lighting.ColorShift_Top
+        Lighting.ColorShift_Top = ModedColorShiftTop
+        LockConnections.CST = (LockConnections.CST and LockConnections.CST:Disconnect()) or Lighting:GetPropertyChangedSignal("ColorShift_Top"):Connect(function()
+            CurrentColorShiftTop = Lighting.ColorShift_Top
+            Lighting.ColorShift_Top = ModedColorShiftTop
+        end)
+    else
+        if LockConnections.CST then
+            LockConnections.CST:Disconnect()
+            LockConnections.CST = nil
+        end
+        Lighting.ColorShift_Top = CurrentColorShiftTop
+    end
+end
+
+function UniversalModules.ColorShiftTopColor(Color)
+    ModedColorShiftTop = Color
+    if ColorShiftTopChange then
+        Lighting.ColorShift_Top = ModedColorShiftTop
+    end
+end
+
+--|| Diffuse Scale Function ||--
+
+function UniversalModules.DiffuseScale(Enabled)
+    DiffuseScaleChange = Enabled
+    if Enabled then
+        CurrentDiffuseScale = Lighting.EnvironmentDiffuseScale
+        Lighting.EnvironmentDiffuseScale = ModedDiffuseScale
+        LockConnections.DS = (LockConnections.DS and LockConnections.DS:Disconnect()) or Lighting:GetPropertyChangedSignal("EnvironmentDiffuseScale"):Connect(function()
+            CurrentDiffuseScale = Lighting.EnvironmentDiffuseScale
+            Lighting.EnvironmentDiffuseScale = ModedDiffuseScale
+        end)
+    else
+        if LockConnections.DS then
+            LockConnections.DS:Disconnect()
+            LockConnections.DS = nil
+        end
+        Lighting.EnvironmentDiffuseScale = CurrentDiffuseScale
+    end
+end
+
+function UniversalModules.DiffuseScaleValue(Number)
+    ModedDiffuseScale = Number
+    if DiffuseScaleChange then
+        Lighting.EnvironmentDiffuseScale = ModedDiffuseScale
+    end
+end
+
+--|| Specular Scale Function ||--
+
+function UniversalModules.SpecularScale(Enabled)
+    SpecularScaleChange = Enabled
+    if Enabled then
+        CurrentSpecularScale = Lighting.EnvironmentSpecularScale
+        Lighting.EnvironmentSpecularScale = ModedSpecularScale
+        LockConnections.SS = (LockConnections.SS and LockConnections.SS:Disconnect()) or Lighting:GetPropertyChangedSignal("EnvironmentSpecularScale"):Connect(function()
+            CurrentSpecularScale = Lighting.EnvironmentSpecularScale
+            Lighting.EnvironmentSpecularScale = ModedSpecularScale
+        end)
+    else
+        if LockConnections.SS then
+            LockConnections.SS:Disconnect()
+            LockConnections.SS = nil
+        end
+        Lighting.EnvironmentSpecularScale = CurrentSpecularScale
+    end
+end
+
+function UniversalModules.SpecularScaleValue(Number)
+    ModedSpecularScale = Number
+    if SpecularScaleChange then
+        Lighting.EnvironmentSpecularScale = ModedSpecularScale
+    end
+end
+
+--|| Shadow Softness Function ||--
+
+function UniversalModules.ShadowSoftness(Enabled)
+    ShadowSoftnessChange = Enabled
+    if Enabled then
+        CurrentShadowSoftness = Lighting.ShadowSoftness
+        Lighting.ShadowSoftness = ModedShadowSoftness
+        LockConnections.SSf = (LockConnections.SSf and LockConnections.SSf:Disconnect()) or Lighting:GetPropertyChangedSignal("ShadowSoftness"):Connect(function()
+            CurrentShadowSoftness = Lighting.ShadowSoftness
+            Lighting.ShadowSoftness = ModedShadowSoftness
+        end)
+    else
+        if LockConnections.SSf then
+            LockConnections.SSf:Disconnect()
+            LockConnections.SSf = nil
+        end
+        Lighting.ShadowSoftness = CurrentShadowSoftness
+    end
+end
+
+function UniversalModules.ShadowSoftnessValue(Number)
+    ModedShadowSoftness = Number
+    if ShadowSoftnessChange then
+        Lighting.ShadowSoftness = ModedShadowSoftness
+    end
+end
+
+--|| Technology Function ||--
+
+function UniversalModules.Technology(Enabled)
+    TechnologyChange = Enabled
+    if Enabled then
+        CurrentTechnology = Lighting.Technology
+        Lighting.Technology = ModedTechnology
+        LockConnections.T = (LockConnections.T and LockConnections.T:Disconnect()) or Lighting:GetPropertyChangedSignal("Technology"):Connect(function()
+            CurrentTechnology = Lighting.Technology
+            Lighting.Technology = ModedTechnology
+        end)
+    else
+        if LockConnections.T then
+            LockConnections.T:Disconnect()
+            LockConnections.T = nil
+        end
+        Lighting.Technology = CurrentTechnology
+    end
+end
+
+function UniversalModules.TechnologyValue(Technology)
+    ModedTechnology = Technology
+    if TechnologyChange then
+        Lighting.Technology = ModedTechnology
+    end
+end
+
+--|| Geographic Latitude Function ||--
+
+function UniversalModules.GeographicLatitude(Enabled)
+    GeographicLatitudeChange = Enabled
+    if Enabled then
+        CurrentGeographicLatitude = Lighting.GeographicLatitude
+        Lighting.GeographicLatitude = ModedGeographicLatitude
+        LockConnections.GL = (LockConnections.GL and LockConnections.GL:Disconnect()) or Lighting:GetPropertyChangedSignal("GeographicLatitude"):Connect(function()
+            CurrentGeographicLatitude = Lighting.GeographicLatitude
+            Lighting.GeographicLatitude = ModedGeographicLatitude
+        end)
+    else
+        if LockConnections.GL then
+            LockConnections.GL:Disconnect()
+            LockConnections.GL = nil
+        end
+        Lighting.GeographicLatitude = CurrentGeographicLatitude
+    end
+end
+
+function UniversalModules.GeographicLatitudeValue(Number)
+    ModedGeographicLatitude = Number
+    if GeographicLatitudeChange then
+        Lighting.GeographicLatitude = ModedGeographicLatitude
+    end
+end
+
 --|| Speaker Died Connection ||--
 
 LockConnections.SpeakerDied = Speaker.CharacterRemoving:Connect(function()
@@ -617,10 +1474,6 @@ end)
 
 function UniversalModules:Exit()
     pcall(function()
-        CurrentWalkSpeed = Speaker.Character:FindFirstChild("Humanoid").WalkSpeed or 16
-        CurrentJumpPower = Speaker.Character:FindFirstChild("Humanoid").JumpPower or 50
-        CurrentGravity = Workspace.Gravity
-        CurrentVoid = Workspace.FallenPartsDestroyHeight
         UniversalModules.AntiAFK(false)
         UniversalModules.FPSCap(false)
         UniversalModules.WalkSpeed(false)
@@ -630,9 +1483,43 @@ function UniversalModules:Exit()
         UniversalModules.VehicleNoclip(false)
         UniversalModules.AntiVoid(false)
         UniversalModules.Fly(false)
+        UniversalModules.ClickToMove(false)
+        UniversalModules.FOV(false)
+        UniversalModules.MaxZoom(false)
+        UniversalModules.MinZoom(false)
+        UniversalModules.UnlockThirdPerson(false)
+        UniversalModules.CameraNoclip(false)
+        UniversalModules.AllowShiftLock(false)
+        UniversalModules.AntiFollowCameraMode(false)
+        UniversalModules.AntiGameplayPaused(false)
+        UniversalModules.CameraOffset(false)
+        UniversalModules.FullBright(false)
+        UniversalModules.FullDark(false)
+        UniversalModules.Day(false)
+        UniversalModules.NoAtmosphere(false)
+        UniversalModules.NoDepthOfField(false)
+        UniversalModules.NoBlur(false)
+        UniversalModules.NoBloom(false)
+        UniversalModules.Ambient(false)
+        UniversalModules.Brightness(false)
+        UniversalModules.ClockTime(false)
+        UniversalModules.OutdoorAmbient(false)
+        UniversalModules.ColorShiftBottom(false)
+        UniversalModules.ColorShiftTop(false)
+        UniversalModules.DiffuseScale(false)
+        UniversalModules.SpecularScale(false)
+        UniversalModules.ShadowSoftness(false)
+        UniversalModules.Technology(false)
+        UniversalModules.GeographicLatitude(false)
         for i,v in pairs(LockConnections) do
-            if v then
+            if typeof(v) == "RBXScriptConnection" then
                 v:Disconnect()
+            elseif typeof(v) == "table" then
+                for i2,v2 in pairs(v) do
+                    if typeof(v2) == "RBXScriptConnection" then
+                        v2:Disconnect()
+                    end
+                end
             end
         end
     end)
