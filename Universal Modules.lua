@@ -56,7 +56,6 @@ CurrentCameraModeMobile = Speaker.DevTouchCameraMode
 ModedFOV = CurrentFOV
 ModedMaxZoom = CurrentMaxZoom
 ModedMinZoom = CurrentMinZoom
-ModedCameraOffset = Camera.CameraSubject.CameraOffset or Vector3.new(0, 0, 0)
 
 --// Current Lighting Series \\--
 CurrentAmbient = Lighting.Ambient
@@ -832,6 +831,9 @@ function UniversalModules.CameraOffset(Enabled)
     if Enabled then
         pcall(function()
             CurrentCameraOffset = Workspace.CurrentCamera.CameraSubject.CameraOffset
+        end)
+        pcall(function()
+            ModedCameraOffset = CurrentCameraOffset
         end)
         LockConnections.CO = (LockConnections.CO and LockConnections.CO:Disconnect()) or Stepped:Connect(function()
             pcall(function()
