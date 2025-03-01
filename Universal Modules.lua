@@ -39,6 +39,7 @@ Stepped = RunService.Stepped
 
 --// Movement and Camera Settings \\--
 Speaker = Players.LocalPlayer
+Humanoid = Speaker.Character:FindFirstChild("Humanoid")
 Camera = Workspace.CurrentCamera
 
 --// Current Camera Series \\--
@@ -84,8 +85,10 @@ ModedTechnology = CurrentTechnology
 ModedGeographicLatitude = CurrentGeographicLatitude
 
 --// Game Mechanics \\--
-CurrentWalkSpeed = Speaker.Character:FindFirstChild("Humanoid").WalkSpeed or 16
-CurrentJumpPower = Speaker.Character:FindFirstChild("Humanoid").JumpPower or 50
+CurrentWalkSpeed = Speaker and Humanoid and Humanoid.WalkSpeed or 16
+CurrentJumpPower = Speaker and Humanoid and Humanoid.JumpPower or 50
+CurrentMaxSlopeAngle = Speaker and Humanoid and Humanoid.MaxSlopeAngle or 89
+CurrentHipHeight = Speaker and Humanoid and Humanoid.HipHeight or 2.25
 CurrentGravity = Workspace.Gravity
 CurrentVoid = Workspace.FallenPartsDestroyHeight
 
@@ -463,7 +466,7 @@ function UniversalModules.MaxSlopeAngle(Enabled)
         if Character then
             local Humanoid = Character:FindFirstChild("Humanoid")
             if Humanoid then
-                Humanoid.MaxSlopeAngle = CurrentMaxSlopeAngle
+                Humanoid.MaxSlopeAngle = CurrentMaxSlopeAngle or 2.25
             end
         end
     end
