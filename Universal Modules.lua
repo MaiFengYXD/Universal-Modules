@@ -601,14 +601,15 @@ function UniversalModules.Fly(Enabled)
         LockConnections.Fly = (LockConnections.Fly and LockConnections.Fly:Disconnect()) or Stepped:Connect(function()
             local MoveDirection = Vector3.new(0, 0, 0)
             local Humanoid = Character:WaitForChild("Humanoid")
+            if Humanoid.Died then
+                return
+            end
             local RootPart = Character:WaitForChild("HumanoidRootPart")
             if not VFly and not SitFly then
                 Humanoid.PlatformStand = true
             elseif VFly and not SitFly then
                 Humanoid.PlatformStand = false
-                if not Humanoid.SeatPart then
-                    Humanoid.Sit = false
-                end
+                Humanoid.Sit = not Humanoid.SeatPart and false
             elseif not VFly and SitFly then
                 Humanoid.PlatformStand = false
                 Humanoid.Sit = true
