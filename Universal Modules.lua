@@ -389,7 +389,7 @@ end
 --|| Hip Height Function ||--
 
 function UniversalModules.HipHeight(Enabled)
-    HipHeightChange = Enabled
+    HipHeight = Enabled
     if Enabled then
         local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
         local Humanoid = Character:WaitForChild("Humanoid")
@@ -425,7 +425,7 @@ end
 
 function UniversalModules.HipHeightValue(Number)
     ModedHipHeight = Number
-    if HipHeightChange then
+    if HipHeight then
         local Character = Speaker.Character
         if Character then
             local Humanoid = Character:FindFirstChild("Humanoid")
@@ -439,7 +439,7 @@ end
 --|| Max Slope Angle Function ||--
 
 function UniversalModules.MaxSlopeAngle(Enabled)
-    MaxSlopeAngleChange = Enabled
+    MaxSlopeAngle = Enabled
     if Enabled then
         local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
         local Humanoid = Character:WaitForChild("Humanoid")
@@ -471,7 +471,7 @@ end
 
 function UniversalModules.MaxSlopeAngleValue(Number)
     ModedMaxSlopeAngle = Number
-    if MaxSlopeAngleChange then
+    if MaxSlopeAngle then
         local Character = Speaker.Character
         if Character then
             local Humanoid = Character:FindFirstChild("Humanoid")
@@ -1383,6 +1383,8 @@ function UniversalModules:Exit()
         UniversalModules.WalkSpeed(false)
         UniversalModules.JumpPower(false)
         UniversalModules.Gravity(false)
+        UniversalModules.HipHeight(false)
+        UniversalModules.MaxSlopeAngle(false)
         UniversalModules.Noclip(false)
         UniversalModules.VehicleNoclip(false)
         UniversalModules.AntiVoid(false)
