@@ -14,7 +14,7 @@ License | CC0-1.0
 Version | 0.0.7f (Stable)
 
 # Project Started on 2024-11-13 #
-# This Version was Last Edited on 2025-02-28 #
+# This Version was Last Edited on 2025-03-01 #
 
 Issues Report on Github or https://discord.gg/YBQUd8X8PK
 QQ: 3607178523
@@ -108,12 +108,13 @@ UniversalModules.CurrentFPS = getfpscap() or 240
 TargetFPS = UniversalModules.CurrentFPS
 
 --// Flying Mode \\--
-VFly = false
 UniversalModules.Flying = false
+VFly = false
 SitFly = false
 QEFly = true
 UseFlyGyro = true
 StopFlyOnDied = true
+UseUpVector = true
 FlySpeed = 30
 VerticalFlySpeedMultipiler = 1
 
@@ -600,6 +601,7 @@ function UniversalModules.Fly(Enabled)
         LockConnections.Fly = (LockConnections.Fly and LockConnections.Fly:Disconnect()) or Stepped:Connect(function()
             local MoveDirection = Vector3.new(0, 0, 0)
             local Humanoid = Character:WaitForChild("Humanoid")
+            local RootPart = Character:WaitForChild("HumanoidRootPart")
             if not VFly and not SitFly then
                 Humanoid.PlatformStand = true
             elseif VFly and not SitFly then
@@ -623,15 +625,24 @@ function UniversalModules.Fly(Enabled)
             if FlyControl.D == 1 then
                 MoveDirection = MoveDirection + Camera.CFrame.RightVector
             end
-            if QEFly and FlyControl.Q == 1 or not QEFly and FlyControl.LeltShift == 1 then
-                MoveDirection = MoveDirection - Vector3.new(0, VerticalFlySpeedMultipiler, 0)
-            end
-            if QEFly and FlyControl.E == 1 or not QEFly and FlyControl.Space == 1 then
-                MoveDirection = MoveDirection + Vector3.new(0, VerticalFlySpeedMultipiler, 0)
+            if UseUpVector then
+                if QEFly and FlyControl.Q == 1 or not QEFly and FlyControl.LeltShift == 1 then
+                    MoveDirection = MoveDirection - RootPart.CFrame.UpVector * VerticalFlySpeedMultipiler
+                end
+                if QEFly and FlyControl.E == 1 or not QEFly and FlyControl.Space == 1 then
+                    MoveDirection = MoveDirection + RootPart.CFrame.UpVector * VerticalFlySpeedMultipiler
+                end
+            else
+                if QEFly and FlyControl.Q == 1 or not QEFly and FlyControl.LeltShift == 1 then
+                    MoveDirection = MoveDirection - Vector3.new(0, VerticalFlySpeedMultipiler, 0)
+                end
+                if QEFly and FlyControl.E == 1 or not QEFly and FlyControl.Space == 1 then
+                    MoveDirection = MoveDirection + Vector3.new(0, VerticalFlySpeedMultipiler, 0)
+                end
             end
             FlyVelocity.Velocity = MoveDirection * FlySpeed
             if UseFlyGyro then
-                FlyGyro.CFrame = Camera.CFrame
+                FlyGyro.CFrame = Camera.CoordinateFrame
             end
         end)
     else
