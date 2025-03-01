@@ -659,7 +659,7 @@ function UniversalModules.Fly(Enabled)
                 Humanoid.PlatformStand = true
             elseif VFly and not SitFly then
                 Humanoid.PlatformStand = false
-                Humanoid.Sit = not Humanoid.SeatPart and false
+                Humanoid.Sit = not Humanoid.SeatPart and false or true
             elseif not VFly and SitFly then
                 Humanoid.PlatformStand = false
                 Humanoid.Sit = true
