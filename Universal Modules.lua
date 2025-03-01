@@ -106,8 +106,14 @@ AFKTime = 60
 AFKTimes = 0
 
 --// Mouse and Target FPS \\--
+FPSOK, FPSFAILD = pcall(function()
+    UniversalModules.CurrentFPS = getfpscap()
+end)
+if FPSFAILD then
+    UniversalModules.CurrentFPS = 240
+end
+
 Mouse = Speaker:GetMouse()
-UniversalModules.CurrentFPS = getfpscap() or 240
 TargetFPS = UniversalModules.CurrentFPS
 
 --// Flying Mode \\--
