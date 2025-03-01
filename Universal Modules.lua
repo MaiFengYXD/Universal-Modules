@@ -96,6 +96,8 @@ CurrentVoid = Workspace.FallenPartsDestroyHeight
 ModedWalkSpeed = CurrentWalkSpeed
 ModedJumpPower = CurrentJumpPower
 ModedGravity = CurrentGravity
+ModedMaxSlopeAngle = CurrentMaxSlopeAngle
+ModedHipHeight = CurrentHipHeight
 
 --// AFK Settings \\--
 AFKMouseClick1 = false
