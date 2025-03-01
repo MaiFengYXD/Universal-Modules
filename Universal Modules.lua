@@ -399,6 +399,10 @@ function UniversalModules.HipHeight(Enabled)
             Humanoid.HipHeight = ModedHipHeight
         end)
         LockConnections.HHCA = Speaker.CharacterAdded:Connect(function(Character)
+            if not DoHipHeightAfterMeRespawn then
+                HipHeightToggle:SetValue(false)
+                return
+            end
             local Humanoid = Character:WaitForChild("Humanoid")
             CurrentHipHeight = Humanoid.HipHeight
             Humanoid.HipHeight = ModedHipHeight
@@ -427,6 +431,52 @@ function UniversalModules.HipHeightValue(Number)
             local Humanoid = Character:FindFirstChild("Humanoid")
             if Humanoid then
                 Humanoid.HipHeight = ModedHipHeight
+            end
+        end
+    end
+end
+
+--|| Max Slope Angle Function ||--
+
+function UniversalModules.MaxSlopeAngle(Enabled)
+    MaxSlopeAngleChange = Enabled
+    if Enabled then
+        local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+        local Humanoid = Character:WaitForChild("Humanoid")
+        CurrentMaxSlopeAngle = Humanoid.MaxSlopeAngle
+        Humanoid.MaxSlopeAngle = ModedMaxSlopeAngle
+        LockConnections.MSA = Humanoid:GetPropertyChangedSignal("MaxSlopeAngle"):Connect(function()
+            Humanoid.MaxSlopeAngle = ModedMaxSlopeAngle
+        end)
+        LockConnections.MSACA = Speaker.CharacterAdded:Connect(function(Character)
+            local Humanoid = Character:WaitForChild("Humanoid")
+            CurrentMaxSlopeAngle = Humanoid.MaxSlopeAngle
+            Humanoid.MaxSlopeAngle = ModedMaxSlopeAngle
+            LockConnections.MSA = (LockConnections.MSA and LockConnections.MSA:Disconnect()) or Humanoid:GetPropertyChangedSignal("MaxSlopeAngle"):Connect(function()
+                Humanoid.MaxSlopeAngle = ModedMaxSlopeAngle
+            end)
+        end)
+    else
+        LockConnections.MSA = LockConnections.MSA and LockConnections.MSA:Disconnect()
+        LockConnections.MSACA = LockConnections.MSACA and LockConnections.MSACA:Disconnect()
+        local Character = Speaker.Character
+        if Character then
+            local Humanoid = Character:FindFirstChild("Humanoid")
+            if Humanoid then
+                Humanoid.MaxSlopeAngle = CurrentMaxSlopeAngle
+            end
+        end
+    end
+end
+
+function UniversalModules.MaxSlopeAngleValue(Number)
+    ModedMaxSlopeAngle = Number
+    if MaxSlopeAngleChange then
+        local Character = Speaker.Character
+        if Character then
+            local Humanoid = Character:FindFirstChild("Humanoid")
+            if Humanoid then
+                Humanoid.MaxSlopeAngle = ModedMaxSlopeAngle
             end
         end
     end
@@ -601,10 +651,10 @@ function UniversalModules.Fly(Enabled)
         LockConnections.Fly = (LockConnections.Fly and LockConnections.Fly:Disconnect()) or Stepped:Connect(function()
             local MoveDirection = Vector3.new(0, 0, 0)
             local Humanoid = Character:WaitForChild("Humanoid")
-            if Humanoid.Died then
+            if Humanoid.Health == 0 then
                 return
             end
-            local RootPart = Character:WaitForChild("HumanoidRootPart")
+            local RootPart = Humanoid.RootPart
             if not VFly and not SitFly then
                 Humanoid.PlatformStand = true
             elseif VFly and not SitFly then
