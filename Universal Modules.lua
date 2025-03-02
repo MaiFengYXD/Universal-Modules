@@ -1584,7 +1584,7 @@ function UniversalModules.Fling(Enabled)
             Library:Notify(GlobalText.NoCharacterWarn, 5)
             return warn(GlobalText.NoCharacterWarn)
         end
-        if WalkFling then
+        if WalkFlinging then
             WalkFlingToggle:SetValue(false)
             Heartbeat:Wait()
         end
@@ -1619,7 +1619,7 @@ function UniversalModules.Fling(Enabled)
         repeat
             FlingBAV.AngularVelocity = Vector3.new(0, 99999, 0)
             wait(.2)
-            FlingBAV.AngularVelocity = Vector3.new(0, -99999, 0)
+            FlingBAV.AngularVelocity = Vector3.new(0, 0, 0)
             wait(.1)
         until not Flinging
     else
@@ -1766,10 +1766,7 @@ function UniversalModules.AntiFling(Enabled)
             for i,v in pairs(Players:GetPlayers()) do
                 if v ~= Speaker and v.Character then
                     for i,v in pairs(v.Character:GetDescendants()) do
-                        if v:IsA("BodyVelocity") or v:IsA("BodyForce") or v:IsA("BodyThrust") or v:IsA("BodyAngularVelocity") then
-                            v:Destroy()
-                        elseif v:IsA("BasePart") then
-                            v.Velocity = Vector3.new(0, 0, 0)
+                        if v:IsA("BasePart") then
                             v.CanCollide = false
                         end
                     end
