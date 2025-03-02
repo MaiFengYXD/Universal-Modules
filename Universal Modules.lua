@@ -11,10 +11,10 @@ $$ | \_/ $$ |$$ |      \$$$$$$$\ \$$$$$$$\ \$$$$$$$\
 
 Creator | MaiFengYXD
 License | CC0-1.0
-Version | 0.0.7f (Stable)
+Version | 0.0.8 (Stable)
 
 # Project Started on 2024-11-13 #
-# This Version was Last Edited on 2025-03-01 #
+# This Version was Last Edited on 2025-03-02 #
 
 Issues Report on Github or https://discord.gg/YBQUd8X8PK
 QQ: 3607178523
@@ -98,6 +98,7 @@ ModedJumpPower = CurrentJumpPower
 ModedGravity = CurrentGravity
 ModedMaxSlopeAngle = CurrentMaxSlopeAngle
 ModedHipHeight = CurrentHipHeight
+TPWalkSpeed = 10
 
 --// AFK Settings \\--
 AFKMouseClick1 = false
@@ -128,6 +129,13 @@ StopFlyOnDied = true
 UseUpVector = true
 FlySpeed = 30
 VerticalFlySpeedMultipiler = 1
+
+--// Fling Settings \\--
+InvisibleRunning = false
+Flinging = false
+WalkFlinging = false
+InvisFlinging = false
+InvisFlinged = false
 
 --// Game Flag \\--
 Weaponry = (game.PlaceId == 3297964905 and true) or false
@@ -307,6 +315,27 @@ function UniversalModules.WalkSpeedValue(Number)
             end
         end
     end
+end
+
+--|| Tp Walk Function ||--
+
+function UniversalModules.TPWalk(Enabled)
+    TPWalk = Enabled
+    if Enabled then
+        LockConnections.TPW = (LockConnections.TPW and LockConnections.TPW:Disconnect()) or Heartbeat:Connect(function(Delta)
+            local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+            local Humanoid = Character:WaitForChild("Humanoid")
+            if Humanoid.MoveDirection.Magnitude > 0 then
+                Character:TranslateBy(Humanoid.MoveDirection * TPWalkSpeed * Delta)
+            end
+        end)
+    else
+        LockConnections.TPW = LockConnections.TPW and LockConnections.TPW:Disconnect()
+    end
+end
+
+function UniversalModules.TPWalkValue(Number)
+    TPWalkSpeed = Number
 end
 
 --|| Jump Power Function ||--
@@ -572,6 +601,29 @@ function UniversalModules.AntiVoid(Enabled)
     else
         LockConnections.V = LockConnections.V and LockConnections.V:Disconnect()
         Workspace.FallenPartsDestroyHeight = CurrentVoid
+    end
+end
+
+--|| Spin Function ||--
+
+function UniversalModules.Spin(Enabled)
+    Spining = Enabled
+    if Enabled then
+        local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+        Spin = Instance.new("BodyAngularVelocity")
+        Spin.Name = "Spin"
+        Spin.Parent = Character and Character:WaitForChild("HumanoidRootPart")
+        Spin.MaxTorque = Vector3.new(0, math.huge, 0)
+        Spin.AngularVelocity = Vector3.new(0, (SpinSpeed or 5), 0)
+    else
+        Spin = Spin and Spin:Destroy()
+    end
+end
+
+function UniversalModules.SpinValue(Number)
+    SpinSpeed = Number
+    if Spining and Spin then
+        Spin.AngularVelocity = Vector3.new(0, SpinSpeed, 0)
     end
 end
 
@@ -1373,9 +1425,369 @@ function UniversalModules.GeographicLatitudeValue(Number)
     end
 end
 
+--|| God Function ||--
+
+function UniversalModules.God()
+    local Position = Camera.CFrame
+    local Character = Speaker.Character
+    if not Character then
+        Library:Notify(GlobalText.NoCharacterWarn, 5)
+        return warn(GlobalText.NoCharacterWarn)
+    end
+    local Humanoid = Character and Character:WaitForChild("Humanoid")
+    local CloneHumanoid = Humanoid:Clone()
+    CloneHumanoid.Parent = Character
+    Speaker.Character = nil
+    CloneHumanoid:SetStateEnabled(CloneHumanoid, 15, false)
+    CloneHumanoid:SetStateEnabled(CloneHumanoid, 1, false)
+    CloneHumanoid:SetStateEnabled(CloneHumanoid, 0, false)
+    CloneHumanoid.BreakJointsOnDeath = true
+    Humanoid = Humanoid:Destroy()
+    Speaker.Character = Character
+    Camera.CameraSubject = CloneHumanoid
+    Camera.CFrame = wait() and Position
+    CloneHumanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+    local Script = Character:FindFirstChild(Character, "Animate")
+    if Script then
+        Script.Disabled = true
+        wait()
+        Script.Disabled = false
+    end
+    CloneHumanoid.Health = CloneHumanoid.MaxHealth
+    Library:Notify(GlobalText.GodSuccess, 5)
+end
+
+--|| Invisible Function ||--
+
+function UniversalModules.Invisible()
+    if InvisibleRunning then
+        return
+    end
+    if Spining then
+        SpinToggle:SetValue(false)
+    end
+    InvisibleRunning = true
+    --// Credit to AmokahFox @V3rmillion \\--
+    local Character = Speaker.Character
+    if not Character then
+        Library:Notify(GlobalText.NoCharacterWarn, 5)
+        InvisibleRunning = false
+        return warn(GlobalText.NoCharacterWarn)
+    end
+    Character.Archivable = true
+    local IsInvis = false
+    local IsRunning = true
+    local InvisibleCharacter = Character:Clone()
+    InvisibleCharacter.Parent = Lighting
+	AntiVoidToggle:SetValue(true)
+	InvisibleCharacter.Name = ""
+	
+    for i,v in pairs(InvisibleCharacter:GetDescendants()) do
+        if v:IsA("BasePart") then
+            if v.Name == "HumanoidRootPart" then
+                v.Transparency = 1
+            else
+                v.Transparency = InvisibleTransparency
+            end
+        end
+    end
+    
+    function InvisRespawn()
+        IsRunning = false
+		if IsInvis == true then
+			pcall(function()
+				Speaker.Character = Character
+				wait()
+				Character.Parent = Workspace
+				Character:WaitForChild("Humanoid"):Destroy()
+				IsInvis = false
+				InvisibleCharacter.Parent = nil
+				invisRunning = false
+			end)
+		elseif IsInvis == false then
+			pcall(function()
+				Speaker.Character = Character
+				wait()
+				Character.Parent = Workspace
+				Character:WaitForChild("Humanoid"):Destroy()
+				TurnVisible()
+			end)
+		end
+    end
+
+    LockConnections.InvisDied = InvisibleCharacter:WaitForChild("Humanoid").Died:Connect(function()
+        Respawn()
+        LockConnections.InvisDied:Disconnect()
+    end)
+
+    if IsInvis == true then
+        return
+    end
+	IsInvis = true
+	CF = workspace.CurrentCamera.CFrame
+	local CF1 = Speaker.Character.HumanoidRootPart.CFrame
+	Character:MoveTo(Vector3.new(0,math.pi*1000000,0))
+	workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+	wait(.2)
+	workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+	InvisibleCharacter = InvisibleCharacter
+	Character.Parent = Lighting
+	InvisibleCharacter.Parent = workspace
+	InvisibleCharacter.HumanoidRootPart.CFrame = CF1
+	Speaker.Character = InvisibleCharacter
+    Camera.Subject = Speaker.Character:FindFirstChild("Humanoid")
+	Camera.CameraType = "Custom"
+    Speaker.CameraMode = "Classic"
+	Speaker.Character.Animate.Disabled = true
+    wait()
+	Speaker.Character.Animate.Disabled = false
+
+    function TurnVisible()
+		if IsInvis == false then
+            return
+        end
+		InvisDied:Disconnect()
+		CF = workspace.CurrentCamera.CFrame
+		Character = Character
+		local CF1 = Speaker.Character.HumanoidRootPart.CFrame
+		Character.HumanoidRootPart.CFrame = CF1
+		InvisibleCharacter:Destroy()
+		Speaker.Character = Character
+		Character.Parent = Workspace
+		IsInvis = false
+		Speaker.Character.Animate.Disabled = true
+        wait()
+		Speaker.Character.Animate.Disabled = false
+		LockConnections.InvisDied = Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+			Respawn()
+			LockConnections.InvisDied:Disconnect()
+		end)
+		invisRunning = false
+	end
+    Library:Notify(GlobalText.InvisSuccess, 5)
+end
+
+function UniversalModules.Visible()
+    TurnVisible()
+end
+
+--|| Fling Function ||--
+
+function UniversalModules.Fling(Enabled)
+    if Enabled then
+        Flinging = false
+        if InvisFlinging then
+            Library:Notify(GlobalText.InvisFlingWarn, 5)
+            return warn(GlobalText.InvisFlingWarn)
+        end
+        if not Speaker.Character then
+            Library:Notify(GlobalText.NoCharacterWarn, 5)
+            return warn(GlobalText.NoCharacterWarn)
+        end
+        if WalkFling then
+            WalkFlingToggle:SetValue(false)
+            Heartbeat:Wait()
+        end
+        if Spining then
+            SpinToggle:SetValue(false)
+        end
+        local Character = Speaker.Character
+        for i,v in pairs(Character:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5)
+            end
+        end
+        NoclipToggle:SetValue(true)
+        FlingBAV = Instance.new("BodyAngularVelocity")
+        FlingBAV.Name = "Fling"
+        FlingBAV.Parent = Character and Character:WaitForChild("HumanoidRootPart")
+        FlingBAV.AngularVelocity = Vector3.new(0, 99999, 0)
+        FlingBAV.MaxTorque = Vector3.new(0, math.huge, 0)
+        FlingBAV.P = math.huge
+        local Children = Character:GetChildren()
+        for i,v in next, Children do
+            if v:IsA("BasePart") then
+                v.CanCollide = false
+                v.Massless = true
+                v.Velocity = Vector3.new(0, 0, 0)
+            end
+        end
+        Flinging = true
+        LockConnections.FlingDied = Character:WaitForChild("Humanoid").Died:Connect(function()
+            FlingToggle:SetValue(false)
+        end)
+        repeat
+            FlingBAV.AngularVelocity = Vector3.new(0, 99999, 0)
+            wait(.2)
+            FlingBAV.AngularVelocity = Vector3.new(0, -99999, 0)
+            wait(.1)
+        until not Flinging
+    else
+        Flinging = false
+        LockConnections.FlingDied = LockConnections.FlingDied and LockConnections.FlingDied:Disconnect()
+        local Character = Speaker.Character
+        if not Character or not Character.HumanoidRootPart then
+            return
+        end
+        FlingBAV = FlingBAV and FlingBAV:Destroy()
+        for i,v in pairs(Character:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
+            end
+        end
+    end
+end
+
+--|| Walk Fling Function ||--
+
+function UniversalModules.WalkFling(Enabled)
+    if Enabled then
+        WalkFlinging = false
+        if InvisFlinging then
+            Library:Notify(GlobalText.InvisFlingWarn, 5)
+            return warn(GlobalText.InvisFlingWarn)
+        end
+        if not Speaker.Character then
+            Library:Notify(GlobalText.NoCharacterWarn, 5)
+            return warn(GlobalText.NoCharacterWarn)
+        end
+        if Flinging then
+            FlingToggle:SetValue(false)
+            Heartbeat:Wait()
+        end
+        if Spining then
+            SpinToggle:SetValue(false)
+        end
+        local Humanoid = Speaker.Character:WaitForChild("Humanoid")
+        LockConnections.WalkFlingDied = Humanoid and Humanoid.Died:Connect(function()
+            WalkFlingToggle:SetValue(false)
+        end)
+        NoclipToggle:SetValue(true)
+        WalkFlinging = true
+        repeat
+            Heartbeat:Wait()
+            local Character = Speaker.Character
+            local RootPart = Character and Character:FindFirstChild("HumanoidRootPart")
+            local Velocity = nil
+            local Movement = 0.1
+            while not (Character and Character.Parent and RootPart and RootPart.Parent) do
+                Heartbeat:Wait()
+                Character = Speaker.Character
+                RootPart = Character and Character:FindFirstChild("HumanoidRootPart")
+            end
+            Velocity = RootPart.Velocity
+            RootPart.Velocity = Velocity * 10000 + Vector3.new(0, 10000, 0)
+            RenderStepped:Wait()
+            if Character and Character.Parent and RootPart and RootPart.Parent then
+                RootPart.Velocity = Velocity
+            end
+            Stepped:Wait()
+            if Character and Character.Parent and RootPart and RootPart.Parent then
+                RootPart.Velocity = Velocity + Vector3.new(0, Movement, 0)
+                Movement = Movement * -1
+            end
+        until not WalkFlinging
+    else
+        WalkFlinging = false
+        LockConnections.WalkFlingDied = LockConnections.WalkFlingDied and LockConnections.WalkFlingDied:Disconnect()
+    end
+end
+
+--|| InvisFling Function ||--
+
+function UniversalModules.InvisFling()
+    if InvisFlinging or InvisFlinged then
+        Library:Notify(GlobalText.InvisFlingWarn, 5)
+        return warn(GlobalText.InvisFlingWarn)
+    end
+    if Spining then
+        SpinToggle:SetValue(false)
+    end
+    InvisFlinging = true
+    WalkFlingToggle:SetValue(false)
+    FlingToggle:SetValue(false)
+    FlyToggle:SetValue(false)
+    local Character = Speaker.Character
+    if not Character then
+        Library:Notify(GlobalText.NoCharacterWarn, 5)
+        return warn(GlobalText.NoCharacterWarn)
+    end
+    local Model = Instance.new("Model")
+    Model.Parent = Character
+    local Torso = Instance.new("Part")
+    Torso.Name = "Torso"
+    Torso.CanCollide = false
+    Torso.Anchored = true
+    local Head = Instance.new("Part")
+    Head.Name = "Head"
+    Head.CanCollide = false
+    Head.Anchored = true
+    Head.Parent = Model
+    local Humanoid = Instance.new("Humanoid")
+    Humanoid.Name = "Humanoid"
+    Humanoid.Parent = Model
+    Torso.Position = Vector3.new(0, 9999, 0)
+    Speaker.Character = Model
+    wait()
+    Speaker.Character = Character
+    wait()
+    local Humanoid = Instance.new("Humanoid")
+    Head:Clone()
+    Humanoid.Parent = Character
+    local RootPart = Character:FindFirstChild("HumanoidRootPart")
+    for i,v in pairs(Character:GetChildren()) do
+        if v ~= RootPart and v.Name ~= "Humanoid" then
+            v:Destroy()
+        end
+    end
+    RootPart.Transparency = 0
+    RootPart.Color = Color3.new(1, 1, 1)
+    LockConnections.InvisFling = Stepped:Connect(function()
+        if Character and Character:FindFirstChild("HumanoidRootPart") then
+            Character:FindFirstChild("HumanoidRootPart").CanCollide = false
+        else
+            LockConnections.InvisFling:Disconnect()
+        end
+    end)
+    FlyToggle:SetValue(true)
+    Camera.CameraSubject = RootPart
+    local BT = Instance.new("BodyThrust")
+    BT.Parent = RootPart
+    BT.Force = Vector3.new(99999, 99999*10, 99999)
+    BT.Location = RootPart.Position
+    InvisFlinged = true
+end
+
+--|| Anti Fling Function ||--
+
+function UniversalModules.AntiFling(Enabled)
+    if Enabled then
+        LockConnections.AntiFling = (LockConnections.AntiFling and LockConnections.AntiFling:Disconnect()) or Stepped:Connect(function()
+            for i,v in pairs(Players:GetPlayers()) do
+                if v ~= Speaker and v.Character then
+                    for i,v in pairs(v.Character:GetDescendants()) do
+                        if v:IsA("BodyVelocity") or v:IsA("BodyForce") or v:IsA("BodyThrust") or v:IsA("BodyAngularVelocity") then
+                            v:Destroy()
+                        elseif v:IsA("BasePart") then
+                            v.Velocity = Vector3.new(0, 0, 0)
+                            v.CanCollide = false
+                        end
+                    end
+                end
+            end
+        end)
+    else
+        LockConnections.AntiFling = LockConnections.AntiFling and LockConnections.AntiFling:Disconnect()
+    end
+end
+
 --|| Speaker Died Connection ||--
 
 LockConnections.SpeakerDied = Speaker.CharacterRemoving:Connect(function()
+    if InvisFlinged then
+        InvisFlinged = false
+        InvisFlinging = false
+    end
     if StopFlyOnDied then
         FlyToggle:SetValue(false)
     end
@@ -1384,6 +1796,11 @@ LockConnections.SpeakerDied = Speaker.CharacterRemoving:Connect(function()
         FlyToggle:SetValue(false)
         Heartbeat:Wait()
         FlyToggle:SetValue(true)
+    end
+    if Spining then
+        SpinToggle:SetValue(false)
+        Heartbeat:Wait()
+        SpinToggle:SetValue(true)
     end
 end)
 
@@ -1394,6 +1811,7 @@ function UniversalModules:Exit()
         UniversalModules.AntiAFK(false)
         UniversalModules.FPSCap(false)
         UniversalModules.WalkSpeed(false)
+        UniversalModules.TPWalk(false)
         UniversalModules.JumpPower(false)
         UniversalModules.Gravity(false)
         UniversalModules.HipHeight(false)
@@ -1401,6 +1819,7 @@ function UniversalModules:Exit()
         UniversalModules.Noclip(false)
         UniversalModules.VehicleNoclip(false)
         UniversalModules.AntiVoid(false)
+        UniversalModules.Spin(false)
         UniversalModules.Fly(false)
         UniversalModules.ClickToMove(false)
         UniversalModules.FOV(false)
@@ -1430,6 +1849,10 @@ function UniversalModules:Exit()
         UniversalModules.ShadowSoftness(false)
         UniversalModules.Technology(false)
         UniversalModules.GeographicLatitude(false)
+        UniversalModules.Visible()
+        UniversalModules.Fling(false)
+        UniversalModules.WalkFling(false)
+        UniversalModules.AntiFling(false)
         for i,v in pairs(LockConnections) do
             if typeof(v) == "RBXScriptConnection" then
                 v:Disconnect()
