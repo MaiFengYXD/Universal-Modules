@@ -14,7 +14,7 @@ License | CC0-1.0
 Version | Stable 0.0.9
 
 # Project Started on 2024-11-13 #
-# This Version was Last Edited on 2025-03-06 #
+# This Version was Last Edited on 2025-03-07 #
 
 Issues Report on Github or https://discord.gg/YBQUd8X8PK
 QQ: 3607178523
@@ -2277,6 +2277,319 @@ function UniversalModules.AntiFling(Enabled)
     end
 end
 
+--|| Swim Function ||--
+
+function UniversalModules.Swim(Enabled)
+    if Enabled then
+        local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+        local Humanoid = Character:WaitForChild("Humanoid")
+        GravityToggle:SetValue(false)
+        if not Swimming and Humanoid then
+            CurrentGravity = Workspace.Gravity
+            Workspace.Gravity = 0
+            local Enums = Enum.HumanoidStateType:GetEnumItems()
+            table.remove(Enums, table.find(Enums, Enum.HumanoidStateType.None))
+            for _, EnumItem in pairs(Enums) do
+                Humanoid:SetStateEnabled(EnumItem, false)
+            end
+            Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
+            LockConnections.Swim = (LockConnections.Swim and LockConnections.Swim:Disconnect()) or Heartbeat:Connect(function()
+                pcall(function()
+                    Speaker.Character.HumanoidRootPart.Velocity = (Speaker.Character.Humanoid.MoveDirection ~= Vector3.new() or UserInputService:IsKeyDown(Enum.KeyCode.Space) and Speaker.Character.HumanoidRootPart.Velocity or Vector3.new())
+                end)
+            end)
+            Swimming = true
+        end
+    else
+        LockConnections.Swim = LockConnections.Swim and LockConnections.Swim:Disconnect()
+        Workspace.Gravity = CurrentGravity
+        Swimming = false
+        local Character = Speaker.Character
+        if Character then
+            local Humanoid = Character:FindFirstChild("Humanoid")
+            if Humanoid then
+                local Enums = Enum.HumanoidStateType:GetEnumItems()
+                table.remove(Enums, table.find(Enums, Enum.HumanoidStateType.None))
+                for _, EnumItem in pairs(Enums) do
+                    Humanoid:SetStateEnabled(EnumItem, true)
+                end
+            end
+        end
+    end
+end
+
+--|| Animations ||--
+
+--// Spasm \\--
+function UniversalModules.Spasm(Enabled)
+    if Enabled then
+        local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+        local Humanoid = Character:WaitForChild("Humanoid")
+        if Humanoid.RigType ~= Enum.HumanoidRigType.R6 then
+            NotifySound(GlobalText.R6Only, 5)
+            return warn(GlobalText.R6Only)
+        end
+        local Animation = Instance.new("Animation")
+        Animation.AnimationId = "rbxassetid://33796059"
+        Spasm = Humanoid:LoadAnimation(Animation)
+        Spasm:Play()
+        Spasm:AdjustSpeed(SpasmSpeed or 99)
+    else
+        if Spasm then
+            Spasm:Stop()
+            Spasm:Destroy()
+        end
+    end
+end
+
+--// Head Throw \\--
+function UniversalModules.HeadThrow()
+    local Character = Speaker.Character
+    if not Character then
+        NotifySound(GlobalText.NoCharacterWarn, 5)
+        return warn(GlobalText.NoCharacterWarn)
+    end
+    local Humanoid = Character:FindFirstChild("Humanoid")
+    if not Humanoid then
+        return
+    end
+    if Humanoid.RigType ~= Enum.HumanoidRigType.R6 then
+        NotifySound(GlobalText.R6Only, 5)
+        return warn(GlobalText.R6Only)
+    end
+    local Animation = Instance.new("Animation")
+    Animation.AnimationId = "rbxassetid://35154961"
+    HeadThrow = Humanoid:LoadAnimation(Animation)
+    HeadThrow:Play(0)
+    HeadThrow:AdjustSpeed(1)
+end
+
+--// Lay Down \\--
+function UniversalModules.LayDown()
+    local Character = Speaker.Character
+    if not Character then
+        NotifySound(GlobalText.NoCharacterWarn, 5)
+        return warn(GlobalText.NoCharacterWarn)
+    end
+    local Humanoid = Character:FindFirstChild("Humanoid")
+    if not Humanoid then
+        return
+    end
+    if Humanoid then
+        Humanoid.Sit = true
+        task.wait(.1)
+        Humanoid.RootPart.CFrame = Humanoid.RootPart.CFrame * CFrame.Angles(math.pi * 0.5, 0, 0)
+        for _, Object in pairs(Character:GetPlayingAnimationTracks()) do
+            Object:Stop()
+        end
+    end
+end
+
+--// Carpet \\--
+function UniversalModules.Carpet(Enabled)
+    if Enabled then
+        local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+        local Humanoid = Character:WaitForChild("Humanoid")
+        if Humanoid.RigType ~= Enum.HumanoidRigType.R6 then
+            NotifySound(GlobalText.R6Only, 5)
+            return warn(GlobalText.R6Only)
+        end
+        CarpetAnimation = Instance.new("Animation")
+        CarpetAnimation.AnimationId = "rbxassetid://282574440"
+        Carpet = Humanoid:LoadAnimation(CarpetAnimation)
+        Carpet:Play(.1, 1, 1)
+        LockConnections.CarpetDied = Humanoid.Died:Connect(function()
+            Carpet:Stop()
+            CarpetAnimation:Destroy()
+            LockConnections.CarpetDied = LockConnections.CarpetDied and LockConnections.CarpetDied:Disconnect()
+            LockConnections.CarpetLoop = LockConnections.CarpetLoop and LockConnections.CarpetLoop:Disconnect()
+        end)
+        if AnimationPlayer then
+            local Player = Players:FindFirstChild(AnimationPlayer)
+            local Character = Player and Player.Character
+            if Player and Character then
+                LockConnections.CarpetLoop = (LockConnections.CarpetLoop and LockConnections.CarpetLoop:Disconnect()) or Heartbeat:Connect(function()
+                    pcall(function()
+                        if Character.Humanoid.RigType ~= Enum.HumanoidRigType.R6 then
+                            Speaker.Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame * CFrame.new(0, -2, 0)
+                        else
+                            local LeftUpperLeg = Character:FindFirstChild("LeftUpperLeg")
+                            local LeftLowerLeg = Character:FindFirstChild("LeftLowerLeg")
+                            local LeftFoot = Character:FindFirstChild("LeftFoot")
+                            local Offset = CFrame.new(0, -(LeftUpperLeg.Size.Y + LeftLowerLeg.Size.Y + LeftFoot.Size.Y), 0)
+                            Speaker.Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame * Offset
+                        end
+                    end)
+                end)
+            end
+        end
+    else
+        if Carpet then
+            Carpet:Stop()
+            CarpetAnimation:Destroy()
+            LockConnections.CarpetDied = LockConnections.CarpetDied and LockConnections.CarpetDied:Disconnect()
+            LockConnections.CarpetLoop = LockConnections.CarpetLoop and LockConnections.CarpetLoop:Disconnect()
+        end
+    end
+end
+
+--// Rape \\--
+function UniversalModules.Rape(Enabled)
+    if Enabled then
+        local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+        local Humanoid = Character:WaitForChild("Humanoid")
+        RapeAnimation = Instance.new("Animation")
+        RapeAnimation.AnimationId = (Humanoid.RigType == Enum.HumanoidRigType.R6 and "rbxassetid://148840371") or "rbxassetid://5918726674"
+        Rape = Humanoid:LoadAnimation(RapeAnimation)
+        Rape:Play(.1, 1, 1)
+        Rape:AdjustSpeed(RapeSpeed)
+        LockConnections.RapeDied = Humanoid.Died:Connect(function()
+            Rape:Stop()
+            RapeAnimation:Destroy()
+            LockConnections.RapeDied:Disconnect()
+            LockConnections.RapeLoop = LockConnections.RapeLoop and LockConnections.RapeLoop:Disconnect()
+        end)
+        if AnimationPlayer then
+            local Player = Players:FindFirstChild(AnimationPlayer)
+            local Character = Player and Player.Character
+            if Player and Character then
+                LockConnections.RapeLoop = (LockConnections.RapeLoop and LockConnections.RapeLoop:Disconnect()) or Heartbeat:Connect(function()
+                    pcall(function()
+                        Speaker.Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1.1)
+                    end)
+                end)
+            end
+        end
+    else
+        if Rape then
+            Rape:Stop()
+            RapeAnimation:Destroy()
+            LockConnections.RapeDied = LockConnections.RapeDied and LockConnections.RapeDied:Disconnect()
+            LockConnections.RapeLoop = LockConnections.RapeLoop and LockConnections.RapeLoop:Disconnect()
+        end
+    end
+end
+
+--// Custom Animation \\--
+function UniversalModules.CustomAnimation(AnimationID, Speed)
+    local Character = Speaker.Character
+    if not Character then
+        NotifySound(GlobalText.NoCharacterWarn, 5)
+        return warn(GlobalText.NoCharacterWarn)
+    end
+    local Humanoid = Character and Character:FindFirstChild("Humanoid")
+    if Humanoid then
+        CustomAnimation = Instance.new("Animation")
+        CustomAnimation.AnimationId = "rbxassetid://"..AnimationID
+        Custom = Humanoid:LoadAnimation(CustomAnimation)
+        Custom:Play()
+        Custom:AdjustSpeed(AnimationSpeed)
+    end
+end
+
+--// Animation Speed \\--
+function UniversalModules.LockAnimationSpeed(Enabled)
+    if Enabled then
+        LockConnections.AnimationSpeed = (LockConnections.AnimationSpeed and LockConnections.AnimationSpeed:Disconnect()) or RenderStepped:Connect(function()
+            local Character = Speaker.Character
+            local Humanoid = Character and Character:FindFirstChild("Humanoid")
+            if Humanoid then
+                for _, Object in next, Humanoid:GetPlayingAnimationTracks() do
+                    Object:AdjustSpeed(AnimationSpeed)
+                end
+            end
+        end)
+    else
+        LockConnections.AnimationSpeed = LockConnections.AnimationSpeed and LockConnections.AnimationSpeed:Disconnect()
+    end
+end
+
+function UniversalModules.AnimationSpeed(Number)
+    AnimationSpeed = Number
+    local Character = Speaker.Character
+    local Humanoid = Character and Character:FindFirstChild("Humanoid")
+    if Humanoid then
+        for _, Object in next, Humanoid:GetPlayingAnimationTracks() do
+            Object:AdjustSpeed(AnimationSpeed or 1)
+        end
+    end
+end
+
+--// Disable Animations \\--
+function UniversalModules.DisableAnimations(Enabled)
+    if Enabled then
+        local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+        local Animate = Character:WaitForChild("Animate")
+        if Animate then
+            Animate.Disabled = true
+        end
+    else
+        local Character = Speaker.Character
+        local Animate = Character and Character:FindFirstChild("Animate")
+        if Animate then
+            Animate.Disabled = false
+        end
+    end
+end
+
+--// Freeze Animations \\--
+function UniversalModules.FreezeAnimations(Enabled)
+    if Enabled then
+        local Character = Speaker.Character or Speaker.CharacterAdded:Wait()
+        local Humanoid = Character:WaitForChild("Humanoid")
+        LockConnections.FZA = RenderStepped:Connect(function()
+            for _, Object in pairs(Humanoid:GetPlayingAnimationTracks()) do
+                Object:AdjustSpeed(0)
+            end
+        end)
+    else
+        LockConnections.FZA = LockConnections.FZA and LockConnections.FZA:Disconnect()
+        local Character = Speaker.Character
+        local Humanoid = Character and Character:FindFirstChild("Humanoid")
+        if Humanoid then
+            for _, Object in pairs(Humanoid:GetPlayingAnimationTracks()) do
+                Object:AdjustSpeed(1)
+            end
+        end
+    end
+end
+
+--// Copy Player's Animation \\--
+function UniversalModules.CopyPlayerAnimation(Player)
+    local Character = Speaker.Character
+    if not Character then
+        NotifySound(GlobalText.NoCharacterWarn, 5)
+        return warn(GlobalText.NoCharacterWarn)
+    end
+    local Humanoid = Character:FindFirstChild("Humanoid")
+    if not Humanoid then
+        return
+    end
+    if AnimationPlayer then
+        local Player = Players:FindFirstChild(AnimationPlayer)
+        local Character = Player and Player.Character
+        local PlayerHumanoid = Character and Character:FindFirstChild("Humanoid")
+        if Player and Character and PlayerHumanoid then
+            for _, Object in pairs(Humanoid:GetPlayingAnimationTracks()) do
+                Object:Stop()
+            end
+            for _, Object in pairs(PlayerHumanoid:GetPlayingAnimationTracks()) do
+                if not string.find(Object.Animation.AnimationId, "507768375") then
+                    local Track = Humanoid:LoadAnimation(Object.Animation)
+                    Track:Play(.1, 1, Object.Speed)
+                    Track.TimePosition = Object.TimePosition
+                    task.spawn(function()
+                        Object.Stopped:Wait()
+                        Track:Stop()
+                        Track:Destroy()
+                    end)
+                    return
+                end
+            end
+        end
+    end
+end
+
 --|| Speaker Died Connection ||--
 
 LockConnections.SpeakerDied = Speaker.CharacterRemoving:Connect(function()
@@ -2298,6 +2611,11 @@ LockConnections.SpeakerDied = Speaker.CharacterRemoving:Connect(function()
         Heartbeat:Wait()
         SpinToggle:SetValue(true)
     end
+    if Swimming then
+        UniversalModules.Swim(false)
+        Heartbeat:Wait()
+        UniversalModules.Swim(true)
+    end
 end)
 
 --|| Exit Function ||--
@@ -2306,7 +2624,6 @@ function UniversalModules:Exit()
     UniversalModules.AntiAFK(false)
     UniversalModules.UseAntiAFKNotify(false)
     UniversalModules.FPSCap(false)
-    UniversalModules.AntiKick(false)
     UniversalModules.WalkSpeed(false)
     UniversalModules.TPWalk(false)
     UniversalModules.JumpPower(false)
