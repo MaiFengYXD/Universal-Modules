@@ -14,7 +14,7 @@ License | CC0-1.0
 Version | 0.0.8 (Stable)
 
 # Project Started on 2024-11-13 #
-# This Version was Last Edited on 2025-03-04 #
+# This Version was Last Edited on 2025-03-06 #
 
 Issues Report on Github or https://discord.gg/YBQUd8X8PK
 QQ: 3607178523
