@@ -11,7 +11,7 @@ $$ | \_/ $$ |$$ |      \$$$$$$$\ \$$$$$$$\ \$$$$$$$\
 
 Creator | MaiFengYXD
 License | CC0-1.0
-Version | 0.0.8 (Stable)
+Version | Stable 0.0.9
 
 # Project Started on 2024-11-13 #
 # This Version was Last Edited on 2025-03-06 #
@@ -1518,7 +1518,7 @@ function UniversalModules.NoAtmosphere(Enabled)
         LockConnections.NA = LockConnections.NA and LockConnections.NA:Disconnect()
         LockConnections.NAA = LockConnections.NAA and LockConnections.NAA:Disconnect()
         local Atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
-        if Atmosphere then
+        if Atmosphere and CurrentAtmosphereDensity then
             Atmosphere.Density = CurrentAtmosphereDensity
         end
     end
@@ -1568,7 +1568,7 @@ function UniversalModules.NoDepthOfField(Enabled)
         LockConnections.NDOF = LockConnections.NDOF and LockConnections.NDOF:Disconnect()
         LockConnections.NDOFA = LockConnections.NDOFA and LockConnections.NDOFA:Disconnect()
         local DepthOfFieldEffect = Lighting:FindFirstChildOfClass("DepthOfFieldEffect")
-        if DepthOfFieldEffect then
+        if DepthOfFieldEffect and CurrentDepthOfField then
             DepthOfFieldEffect.Enabled = CurrentDepthOfField
         end
     end
@@ -1597,7 +1597,7 @@ function UniversalModules.NoBlur(Enabled)
         LockConnections.NB = LockConnections.NB and LockConnections.NB:Disconnect()
         LockConnections.NBA = LockConnections.NBA and LockConnections.NBA:Disconnect()
         local BlurEffect = Lighting:FindFirstChildOfClass("BlurEffect")
-        if BlurEffect then
+        if BlurEffect and CurrentBlur then
             BlurEffect.Enabled = CurrentBlur
         end
     end
@@ -1626,7 +1626,7 @@ function UniversalModules.NoBloom(Enabled)
         LockConnections.NBL = LockConnections.NBL and LockConnections.NBL:Disconnect()
         LockConnections.NBLA = LockConnections.NBLA and LockConnections.NBLA:Disconnect()
         local BloomEffect = Lighting:FindFirstChildOfClass("BloomEffect")
-        if BloomEffect then
+        if BloomEffect and CurrentBloom then
             BloomEffect.Enabled = CurrentBloom
         end
     end
