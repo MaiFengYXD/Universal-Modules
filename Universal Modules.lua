@@ -14,7 +14,7 @@ License | CC0-1.0
 Version | Stable 0.0.9
 
 # Project Started on 2024-11-13 #
-# This Version was Last Edited on 2025-03-07 #
+# This Version was Last Edited on 2025-03-09 #
 
 Issues Report on Github or https://discord.gg/YBQUd8X8PK
 QQ: 3607178523
@@ -207,8 +207,8 @@ function EasingSelector(ModeString)
     end
 end
 
-EasingMode = CubicEaseOut
-EasingDuration = 0.8
+EasingMode = QuarticEaseOut
+EasingDuration = 1
 NoEasingAnimator = false
 
 --|| Animator Functions ||--
@@ -222,12 +222,13 @@ function FOVAnimator(StartValue, EndValue)
     end
     local StartTime = tick()
     FOVAnimating = true
-    LockConnections.FOVA = (LockConnections.FOVA and LockConnections.FOVA:Disconnect()) or Heartbeat:Connect(function()
+    RunService:UnbindFromRenderStep("FOVAnimator")
+    RunService:BindToRenderStep("FOVAnimator", 200, function()
         local ElapsedTime = tick() - StartTime
         if ElapsedTime >= EasingDuration then
             Camera.FieldOfView = EndValue
             FOVAnimating = false
-            LockConnections.FOVA:Disconnect()
+            RunService:UnbindFromRenderStep("FOVAnimator")
         end
         local Progress = ElapsedTime / EasingDuration
         local EasedProgress = EasingMode(Progress)
@@ -255,12 +256,13 @@ function CameraOffsetAnimator(StartValue, EndValue)
     end
     local StartTime = tick()
     CameraOffsetAnimating = true
-    LockConnections.COA = (LockConnections.COA and LockConnections.COA:Disconnect()) or RenderStepped:Connect(function()
+    RunService:UnbindFromRenderStep("CameraOffsetAnimator")
+    RunService:BindToRenderStep("CameraOffsetAnimator", 200, function()
         local ElapsedTime = tick() - StartTime
         if ElapsedTime >= EasingDuration then
             CameraOffsetInstance.Value = EndValue
             CameraOffsetAnimating = false
-            LockConnections.COA:Disconnect()
+            RunService:UnbindFromRenderStep("CameraOffsetAnimator")
         end
         local Progress = ElapsedTime / EasingDuration
         local EasedProgress = EasingMode(Progress)
@@ -278,12 +280,13 @@ function PlayerScaleAnimator(StartValue, EndValue)
     end
     local StartTime = tick()
     PlayerScaling = true
-    LockConnections.PSA = (LockConnections.PSA and LockConnections.PSA:Disconnect()) or Heartbeat:Connect(function()
+    RunService:UnbindFromRenderStep("PlayerScaleAnimator")
+    RunService:BindToRenderStep("PlayerScaleAnimator", 200, function()
         local ElapsedTime = tick() - StartTime
         if ElapsedTime >= EasingDuration then
             Speaker.Character:ScaleTo(EndValue)
             PlayerScaling = false
-            LockConnections.PSA:Disconnect()
+            RunService:UnbindFromRenderStep("PlayerScaleAnimator")
         end
         local Progress = ElapsedTime / EasingDuration
         local EasedProgress = EasingMode(Progress)
@@ -307,12 +310,13 @@ function CameraZoomAnimator(StartValue, EndValue, MaxorMin)
     if MaxorMin == "Max" then
         local StartTime = tick()
         MaxCameraZooming = true
-        LockConnections.CZAM = (LockConnections.CZAM and LockConnections.CZAM:Disconnect()) or Heartbeat:Connect(function()
+        RunService:UnbindFromRenderStep("CameraMaxZoomAnimator")
+        RunService:BindToRenderStep("CameraMaxZoomAnimator", 200, function()
             local ElapsedTime = tick() - StartTime
             if ElapsedTime >= EasingDuration then
                 Speaker.CameraMaxZoomDistance = EndValue
                 MaxCameraZooming = false
-                LockConnections.CZAM:Disconnect()
+                RunService:UnbindFromRenderStep("CameraMaxZoomAnimator")
             end
             local Progress = ElapsedTime / EasingDuration
             local EasedProgress = EasingMode(Progress)
@@ -322,12 +326,13 @@ function CameraZoomAnimator(StartValue, EndValue, MaxorMin)
     else
         local StartTime = tick()
         MinCameraZooming = true
-        LockConnections.CZA = (LockConnections.CZA and LockConnections.CZA:Disconnect()) or Heartbeat:Connect(function()
+        RunService:UnbindFromRenderStep("CameraMinZoomAnimator")
+        RunService:BindToRenderStep("CameraMinZoomAnimator", 200, function()
             local ElapsedTime = tick() - StartTime
             if ElapsedTime >= EasingDuration then
                 Speaker.CameraMinZoomDistance = EndValue
                 MinCameraZoomin = false
-                LockConnections.CZA:Disconnect()
+                RunService:UnbindFromRenderStep("CameraMinZoomAnimator")
             end
             local Progress = ElapsedTime / EasingDuration
             local EasedProgress = EasingMode(Progress)
@@ -442,18 +447,15 @@ end
 
 --|| AntiKick Function ||--
 
-function TestHookmetamethod()
+do
     if hookmetamethod then
         local Object = setmetatable({}, { __index = newcclosure(function() return false end), __metatable = "Locked!" })
         local Ref = hookmetamethod(Object, "__index", function() return true end)
-        if Object.test ~= false and Ref() ~= true then
-            CanHookMM = true
-        end
+        CanHookMM = Object.test ~= false and Ref() ~= true
     else
         CanHookMM = false
     end
 end
-TestHookmetamethod()
 
 function UniversalModules.AntiKick()
     if CanHookMM then
@@ -702,7 +704,7 @@ LockConnections.OnDescendantRemoving = Workspace.DescendantRemoving:Connect(func
 end)
 
 --// Instant Prompt Function \\--
-function TestFireProximityPrompt()
+do
     if fireproximityprompt then
         local Part = Instance.new("Part")
         Part.CFrame = CFrame.new(0, 0, 0)
@@ -721,7 +723,6 @@ function TestFireProximityPrompt()
         CanFirePP = false
     end
 end
-TestFireProximityPrompt()
 
 function UniversalModules.InstantPrompt(Enabled)
     if CanFirePP then
@@ -800,22 +801,31 @@ function UniversalModules.RequiresLineOfSight(Enabled)
 end
 
 --// Auto Interaction Function \\--
+AIMethod = "Character"
 LockConnections.AI = (LockConnections.AI and LockConnections.AI:Disconnect()) or Heartbeat:Connect(function()
     if AllowAutoInteraction and Options.AutoInteractionKeyPicker:GetState() then
-        local SpeakerGui = Speaker:FindFirstChildOfClass("PlayerGui")
-        local PromptGui = SpeakerGui and SpeakerGui:FindFirstChild("ProximityPrompts")
-        if PromptGui then
-            for _, PromptBillboard in pairs(PromptGui:GetChildren()) do
-                local PromptPart = PromptBillboard and PromptBillboard.Adornee
-                if PromptPart then
-                    for _, Prompt in pairs(PromptPart:GetDescendants()) do
-                        if Prompt:IsA("ProximityPrompt") then
-                            fireproximityprompt(Prompt, Prompt.MaxActivationDistance)
+        --pcall(function()
+            if AIMethod == "Character" then
+                for _, Prompt in pairs(OriginalPrompts.Instance) do
+                    local MaxActivationDistance = Prompt.MaxActivationDistance
+                    if (Speaker.Character:FindFirstChild("HumanoidRootPart").Position - Prompt.Parent.Position).Magnitude <= MaxActivationDistance then
+                        fireproximityprompt(Prompt, MaxActivationDistance)
+                    end
+                end
+            else
+                for _, Gui in pairs(Speaker:FindFirstChildOfClass("PlayerGui"):GetChildren()) do
+                    if Gui:IsA("ScreenGui") and Gui.Name == "ProximityPrompts" then
+                        for _, PromptBillboard in pairs(Gui:GetChildren()) do
+                            for _, Prompt in pairs(PromptBillboard.Adornee:GetDescendants()) do
+                                if Prompt:IsA("ProximityPrompt") then
+                                    fireproximityprompt(Prompt, Prompt.MaxActivationDistance)
+                                end
+                            end
                         end
                     end
                 end
             end
-        end
+        --end)
     end
 end)
 
@@ -1419,15 +1429,19 @@ end
 
 LockConnections.FB = {}
 function UniversalModules.FullBright(Enabled)
-    FullBrightChange = Enabled
     if Enabled then
+        FullBrightChange = true
         if AmbientChange or BrightnessChange or ClockTimeChange or OutdoorAmbientChange then
             AmbientColorToggle:SetValue(false)
             BrightnessToggle:SetValue(false)
             ClockTimeToggle:SetValue(false)
             OutdoorAmbientToggle:SetValue(false)
-            wait(.1)
+            repeat
+                Heartbeat:Wait()
+            until not AmbientChange and not BrightnessChange and not ClockTimeChange and not OutdoorAmbientChange
+            Heartbeat:Wait()
         end
+        Stepped:Wait()
         CurrentAmbient = Lighting.Ambient
         CurrentBrightness = Lighting.Brightness
         CurrentClockTime = Lighting.ClockTime
@@ -1453,6 +1467,7 @@ function UniversalModules.FullBright(Enabled)
         Lighting.Brightness = CurrentBrightness
         Lighting.ClockTime = CurrentClockTime
         Lighting.OutdoorAmbient = CurrentOutdoorAmbient
+        FullBrightChange = false
     end
 end
 
@@ -1501,7 +1516,7 @@ function UniversalModules.NoAtmosphere(Enabled)
     NoAtmosphereChange = Enabled
     if Enabled then
         repeat
-            wait(0.016)
+            Heartbeat:Wait()
         until Lighting:FindFirstChildOfClass("Atmosphere")
         local Atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
         CurrentAtmosphereDensity = Atmosphere.Density
@@ -1551,7 +1566,7 @@ function UniversalModules.NoDepthOfField(Enabled)
     NoDepthOfFieldChange = Enabled
     if Enabled then
         repeat
-            wait(0.016)
+            Heartbeat:Wait()
         until Lighting:FindFirstChildOfClass("DepthOfFieldEffect")
         local DepthOfFieldEffect = Lighting:FindFirstChildOfClass("DepthOfFieldEffect")
         CurrentDepthOfField = DepthOfFieldEffect.Enabled
@@ -1580,7 +1595,7 @@ function UniversalModules.NoBlur(Enabled)
     NoBlurChange = Enabled
     if Enabled then
         repeat
-            wait(0.016)
+            Heartbeat:Wait()
         until Lighting:FindFirstChildOfClass("BlurEffect")
         local BlurEffect = Lighting:FindFirstChildOfClass("BlurEffect")
         CurrentBlur = BlurEffect.Enabled
@@ -1609,7 +1624,7 @@ function UniversalModules.NoBloom(Enabled)
     NoBloomChange = Enabled
     if Enabled then
         repeat
-            wait(0.016)
+            Heartbeat:Wait()
         until Lighting:FindFirstChildOfClass("BloomEffect")
         local BloomEffect = Lighting:FindFirstChildOfClass("BloomEffect")
         CurrentBloom = BloomEffect.Enabled
@@ -1638,13 +1653,11 @@ function UniversalModules.Ambient(Enabled)
     if Enabled then
         AmbientChange = true
         repeat
-            wait(0.016)
+            Heartbeat:Wait()
         until not FullBrightChange
-        Heartbeat:Wait()
         CurrentAmbient = Lighting.Ambient
         Lighting.Ambient = ModedAmbient
         LockConnections.A = (LockConnections.A and LockConnections.A:Disconnect()) or Lighting:GetPropertyChangedSignal("Ambient"):Connect(function()
-            CurrentAmbient = Lighting.Ambient
             Lighting.Ambient = ModedAmbient
         end)
     else
@@ -1667,7 +1680,7 @@ function UniversalModules.Brightness(Enabled)
     if Enabled then
         BrightnessChange = true
         repeat
-            wait(0.016)
+            Heartbeat:Wait()
         until not FullBrightChange
         Heartbeat:Wait()
         CurrentBrightness = Lighting.Brightness
@@ -1695,7 +1708,7 @@ function UniversalModules.ClockTime(Enabled)
     if Enabled then
         ClockTimeChange = true
         repeat
-            wait(0.016)
+            Heartbeat:Wait()
         until not FullBrightChange
         Heartbeat:Wait()
         CurrentClockTime = Lighting.ClockTime
@@ -1723,7 +1736,7 @@ function UniversalModules.OutdoorAmbient(Enabled)
     if Enabled then
         OutdoorAmbientChange = true
         repeat
-            wait(0.016)
+            Heartbeat:Wait()
         until not FullBrightChange
         Heartbeat:Wait()
         CurrentOutdoorAmbient = Lighting.OutdoorAmbient
@@ -2240,8 +2253,10 @@ end
 
 --|| Anti Fling Function ||--
 
+AntiFlingNoclipParts = {}
 function UniversalModules.AntiFling(Enabled)
     if Enabled then
+        AntiFlingNoclipParts = {}
         LockConnections.AntiFling = (LockConnections.AntiFling and LockConnections.AntiFling:Disconnect()) or Stepped:Connect(function()
             for _, Player in pairs(Players:GetPlayers()) do
                 if Player ~= Speaker and Player.Character then
@@ -2683,6 +2698,11 @@ function UniversalModules:Exit()
     for _, Object in pairs(LockConnections) do
         DisconnectConnections(Object)
     end
+    RunService:UnbindFromRenderStep("FOVAnimator")
+    RunService:UnbindFromRenderStep("CameraOffsetAnimator")
+    RunService:UnbindFromRenderStep("PlayerScaleAnimator")
+    RunService:UnbindFromRenderStep("CameraMaxZoomAnimator")
+    RunService:UnbindFromRenderStep("CameraMinZoomAnimator")
     Camera.FieldOfView = CurrentFOV
     Speaker.CameraMaxZoomDistance = CurrentMaxZoom
     Speaker.CameraMinZoomDistance = CurrentMinZoom
