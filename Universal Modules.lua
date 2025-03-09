@@ -2186,7 +2186,6 @@ function UniversalModules.InvisFling()
         SpinToggle:SetValue(false)
     end
     InvisFlinging = true
-    WalkFlingToggle:SetValue(false)
     FlingToggle:SetValue(false)
     FlyToggle:SetValue(false)
     UniversalModules.God()
